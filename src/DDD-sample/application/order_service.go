@@ -1,8 +1,8 @@
 package application
 
 import (
-	"myProject/src/DDD-sample/domain/model"
-	"myProject/src/DDD-sample/domain/repository"
+	"github.com/lee212400/myProject/domain/model"
+	"github.com/lee212400/myProject/domain/repository"
 )
 
 type OrderRepository interface {

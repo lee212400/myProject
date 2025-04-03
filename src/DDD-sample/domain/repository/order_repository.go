@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"myProject/src/DDD-sample/domain/model"
+	"github.com/lee212400/myProject/domain/model"
 )
 
 // ビジネスルールで決まっている機能
