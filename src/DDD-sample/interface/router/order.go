@@ -1,7 +1,7 @@
 package router
 
 import (
-	"myProject/src/interface/handler"
+	"myProject/src/DDD-sample/interface/handler"
 
 	"github.com/labstack/echo"
 )

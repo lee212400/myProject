@@ -1,10 +1,10 @@
 package main
 
 import (
-	"myProject/src/application"
-	"myProject/src/infrastructure/repository"
-	"myProject/src/interface/handler"
-	"myProject/src/interface/router"
+	"myProject/src/DDD-sample/application"
+	"myProject/src/DDD-sample/infrastructure/repository"
+	"myProject/src/DDD-sample/interface/handler"
+	"myProject/src/DDD-sample/interface/router"
 
 	"github.com/labstack/echo"
 )

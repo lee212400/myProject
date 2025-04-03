@@ -1,8 +1,8 @@
 package handler
 
 import (
-	"myProject/src/application"
-	"myProject/src/domain/model"
+	"myProject/src/DDD-sample/application"
+	"myProject/src/DDD-sample/domain/model"
 	"net/http"
 
 	"github.com/labstack/echo"

@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"myProject/src/domain/model"
+	"myProject/src/DDD-sample/domain/model"
 )
 
 type OrderRepository struct {
