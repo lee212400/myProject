@@ -1,8 +1,11 @@
 module github.com/lee212400/myProject
 
-go 1.24.2
+go 1.24.0
 
-require github.com/labstack/echo v3.3.10+incompatible
+require (
+	github.com/google/wire v0.6.0
+	github.com/labstack/echo v3.3.10+incompatible
+)
 
 require (
 	github.com/labstack/gommon v0.4.2 // indirect

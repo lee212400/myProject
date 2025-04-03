@@ -4,19 +4,19 @@ import (
 	"github.com/lee212400/myProject/domain/entity"
 )
 
-type OrderRepository struct {
+type OrderRepositoryImpl struct {
 }
 
-func NewOrderRepository() *OrderRepository {
-	return &OrderRepository{}
+func NewOrderRepositoryImpl() *OrderRepositoryImpl {
+	return &OrderRepositoryImpl{}
 }
 
-func (o *OrderRepository) Save(order *entity.Order) error {
+func (o *OrderRepositoryImpl) Save(order *entity.Order) error {
 	// db処理
 	return nil
 }
 
-func (o *OrderRepository) FindByID(id string) (*entity.Order, error) {
+func (o *OrderRepositoryImpl) FindByID(id string) (*entity.Order, error) {
 	order := &entity.Order{}
 
 	// db処理
