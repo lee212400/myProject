@@ -1,8 +1,8 @@
 package application
 
 import (
-	"myProject/src/domain/model"
-	"myProject/src/domain/repository"
+	"github.com/lee212400/myProject/domain/model"
+	"github.com/lee212400/myProject/domain/repository"
 )
 
 type OrderRepository interface {

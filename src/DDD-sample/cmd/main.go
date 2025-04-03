@@ -1,10 +1,10 @@
 package main
 
 import (
-	"myProject/src/application"
-	"myProject/src/infrastructure/repository"
-	"myProject/src/interface/handler"
-	"myProject/src/interface/router"
+	"github.com/lee212400/myProject/application"
+	"github.com/lee212400/myProject/infrastructure/repository"
+	"github.com/lee212400/myProject/interface/handler"
+	"github.com/lee212400/myProject/interface/router"
 
 	"github.com/labstack/echo"
 )

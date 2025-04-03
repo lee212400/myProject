@@ -1,9 +1,10 @@
 package handler
 
 import (
-	"myProject/src/application"
-	"myProject/src/domain/model"
 	"net/http"
+
+	"github.com/lee212400/myProject/application"
+	"github.com/lee212400/myProject/domain/model"
 
 	"github.com/labstack/echo"
 )

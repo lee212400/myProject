@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"myProject/src/domain/model"
+	"github.com/lee212400/myProject/domain/model"
 )
 
 type OrderRepository struct {
