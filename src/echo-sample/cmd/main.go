@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"regexp"
@@ -194,6 +195,72 @@ func validateSample(e *echo.Echo) {
 
 		res := fmt.Sprintf("id:%s, name:%s, age:%d", id, reqDt.UserName, reqDt.UserAge)
 		return c.String(http.StatusOK, res)
+	})
+
+}
+
+type UserResponse struct {
+	UserName  string `json:"userName"`
+	UserAge   int    `json:"userAge"`
+	UserEmail string `json:"userEmail"`
+	UserId    string `json:"userId"`
+}
+
+func response(e *echo.Echo) {
+	// 文字列返却
+	e.GET("/user/:name", func(e echo.Context) error {
+		name := e.Param("name")
+		return e.String(http.StatusOK, fmt.Sprintf("Hello, %s User!", name))
+	})
+
+	// json形式
+	e.GET("user/:id", func(e echo.Context) error {
+		id := e.Param("id")
+
+		res := &UserResponse{
+			UserName:  "name",
+			UserEmail: "test@sample.com",
+			UserId:    id,
+			UserAge:   30,
+		}
+		return e.JSON(http.StatusOK, res)
+		// json indentして返却
+		// return e.JSONPretty(http.StatusOK, res, "  ")
+	})
+
+	// 大量データを返却する場合、jsonを直接ストリーミング可能可能
+	e.GET("users/", func(e echo.Context) error {
+		res := &UserResponse{
+			UserName:  "name",
+			UserEmail: "test@sample.com",
+			UserId:    "id",
+			UserAge:   30,
+		}
+
+		e.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
+		e.Response().WriteHeader(http.StatusOK)
+		return json.NewEncoder(e.Response()).Encode(res)
+	})
+
+	// HTML形式で返却
+	e.GET("user/:id", func(e echo.Context) error {
+		return e.HTML(http.StatusOK, "<strong>Hello, World!</strong>")
+	})
+
+	// XML形式で返却
+	e.GET("user/:id", func(e echo.Context) error {
+		res := &UserResponse{
+			UserName:  "name",
+			UserEmail: "test@sample.com",
+			UserId:    "id",
+			UserAge:   30,
+		}
+		return e.XML(http.StatusOK, res)
+	})
+
+	// 定義したURLにリダイレクト
+	e.GET("user/:id", func(e echo.Context) error {
+		return e.Redirect(http.StatusMovedPermanently, "https://sample.com")
 	})
 
 }
