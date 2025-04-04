@@ -3,7 +3,9 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"regexp"
 
+	validator "github.com/go-playground/validator/v10"
 	"github.com/labstack/echo"
 )
 
@@ -11,7 +13,8 @@ func main() {
 	newE := echo.New()
 
 	//routing(newE)
-	request(newE)
+	//request(newE)
+	validateSample(newE)
 
 	newE.Logger.Fatal(newE.Start(":8888"))
 }
@@ -116,6 +119,81 @@ func request(e *echo.Echo) {
 }
 
 type UserRequest struct {
-	UserName string `json:"userName"`
-	UserAge  int    `json:"userAge"`
+	UserName  string `json:"userName" validate:"required"`
+	UserAge   int    `json:"userAge" validate:"required"`
+	UserEmail string `json:"userEmail" validate:"required,email"`
+	UserId    string `json:"userId" validate:"required,email"`
+}
+
+type CustomValidator struct {
+	validator *validator.Validate
+}
+
+var usernameRegex = regexp.MustCompile(`^[a-zA-Z0-9]{1,20}$`)
+
+func (cv *CustomValidator) Validate(i interface{}) error {
+	// http status制御
+	if err := cv.validator.Struct(i); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+	return nil
+}
+
+func validateSample(e *echo.Echo) {
+	validate := validator.New()
+	// keyを追加して、特定項目に対してカスタマイズ可能
+	validate.RegisterValidation("userName", func(fl validator.FieldLevel) bool {
+		val := fl.Field().String()
+		return len(val) >= 3 && len(val) <= 20
+	})
+
+	// カスタマイズで正規表現のvalidateチェック可能
+	validate.RegisterValidation("userId", func(fl validator.FieldLevel) bool {
+		return usernameRegex.MatchString(fl.Field().String())
+	})
+
+	// 単一validateチェック
+	e.GET("/user/:name", func(e echo.Context) error {
+		name := e.Param("name")
+		if err := validate.Var(name, "required,min=2,max=10"); err != nil {
+			return e.String(http.StatusBadRequest, err.Error())
+		}
+		return e.String(http.StatusOK, fmt.Sprintf("Hello, %s User!", name))
+	})
+
+	// 構造体を利用してvalidateチェック
+	e.PUT("user/:id", func(e echo.Context) error {
+		id := e.Param("id")
+		reqDt := UserRequest{}
+
+		if err := e.Bind(&reqDt); err != nil {
+			return e.JSON(http.StatusBadRequest, err.Error())
+		}
+
+		if err := validate.Struct(reqDt); err != nil {
+			return e.String(http.StatusBadRequest, err.Error())
+		}
+
+		res := fmt.Sprintf("id:%s, name:%s, age:%d", id, reqDt.UserName, reqDt.UserAge)
+		return e.String(http.StatusOK, res)
+	})
+
+	// validate customer
+	e.Validator = &CustomValidator{validator: validate}
+	e.PUT("user/:id", func(c echo.Context) error {
+		id := c.Param("id")
+		reqDt := UserRequest{}
+
+		if err := c.Bind(&reqDt); err != nil {
+			return c.JSON(http.StatusBadRequest, err.Error())
+		}
+
+		if err := c.Validate(reqDt); err != nil {
+			return err
+		}
+
+		res := fmt.Sprintf("id:%s, name:%s, age:%d", id, reqDt.UserName, reqDt.UserAge)
+		return c.String(http.StatusOK, res)
+	})
+
 }
