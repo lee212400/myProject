@@ -1,6 +1,6 @@
 module github.com/lee212400/myProject
 
-go 1.24.2
+go 1.24.0
 
 require github.com/labstack/echo v3.3.10+incompatible
 
