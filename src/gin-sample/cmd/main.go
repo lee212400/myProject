@@ -12,7 +12,8 @@ func main() {
 	router := gin.Default()
 
 	//	routing(router)
-	request(router)
+	// request(router)
+	requestStruct(router)
 
 	router.Run(":8888")
 }
@@ -107,5 +108,67 @@ func request(g *gin.Engine) {
 		c.SaveUploadedFile(file, "dst")
 
 		c.String(http.StatusOK, fmt.Sprintf("'%s' uploaded!", file.Filename))
+	})
+}
+
+type User struct {
+	Name  string `json:"name" form:"name" uri:"name" binding:"required"`
+	Email string `json:"email" form:"email" binding:"required,email"`
+}
+
+type Header struct {
+	Token string `header:"token" binding:"required"`
+}
+
+func requestStruct(g *gin.Engine) {
+	// json
+	g.POST("/user", func(c *gin.Context) {
+		var u User
+		if err := c.ShouldBindJSON(&u); err != nil {
+			c.String(http.StatusBadRequest, "error: %v", err.Error())
+			return
+		}
+		c.String(http.StatusOK, "OK")
+	})
+
+	// query parameter
+	g.GET("/user", func(c *gin.Context) {
+		var u User
+		if err := c.ShouldBindQuery(&u); err != nil {
+			c.String(http.StatusBadRequest, "error: %v", err.Error())
+			return
+		}
+		c.String(http.StatusOK, "OK")
+	})
+
+	// uri経路
+	g.GET("/user/:name/:email", func(c *gin.Context) {
+		var u User
+		if err := c.ShouldBindUri(&u); err != nil {
+			c.String(http.StatusBadRequest, "error: %v", err.Error())
+			return
+		}
+		c.String(http.StatusOK, "OK")
+	})
+
+	// content-typeによってbinding
+	// jsonの場合josn、application/x-www-form-urlencoded場合form
+	g.POST("/user", func(c *gin.Context) {
+		var u User
+		if err := c.ShouldBind(&u); err != nil {
+			c.String(http.StatusBadRequest, "error: %v", err.Error())
+			return
+		}
+		c.String(http.StatusOK, "OK")
+	})
+
+	// headerのbinding
+	g.GET("/header", func(c *gin.Context) {
+		var h Header
+		if err := c.ShouldBindHeader(&h); err != nil {
+			c.String(http.StatusBadRequest, "error: %v", err.Error())
+			return
+		}
+		c.String(http.StatusOK, "OK")
 	})
 }
