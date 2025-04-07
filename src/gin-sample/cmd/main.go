@@ -4,8 +4,11 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"regexp"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
+	"github.com/go-playground/validator/v10"
 )
 
 func main() {
@@ -13,7 +16,8 @@ func main() {
 
 	//	routing(router)
 	// request(router)
-	requestStruct(router)
+	// requestStruct(router)
+	validate(router)
 
 	router.Run(":8888")
 }
@@ -166,6 +170,61 @@ func requestStruct(g *gin.Engine) {
 	g.GET("/header", func(c *gin.Context) {
 		var h Header
 		if err := c.ShouldBindHeader(&h); err != nil {
+			c.String(http.StatusBadRequest, "error: %v", err.Error())
+			return
+		}
+		c.String(http.StatusOK, "OK")
+	})
+}
+
+type UserRequestData struct {
+	Name  string `json:"username" binding:"required,username"` // bindingキーワードを使って定義定義
+	Email string `json:"email" binding:"required,email"`
+	Age   int    `json:"age" binding:"required,gte=20,lte=60"`
+}
+
+type RegisterForm struct {
+	Password        string `json:"password" binding:"required,min=6"`
+	ConfirmPassword string `json:"confirm_password" binding:"required"`
+}
+
+// validateカスタマイズ
+
+var usernameRegex = regexp.MustCompile(`^[a-zA-Z][a-zA-Z0-9]{5,11}$`)
+
+// 項目レベルでのvalidateチェック
+func usernameValidation(fl validator.FieldLevel) bool {
+	return usernameRegex.MatchString(fl.Field().String())
+}
+
+// 構造体レベルでのvalidateチェック
+func passwordMatchValidation(sl validator.StructLevel) {
+	form := sl.Current().Interface().(RegisterForm)
+	if form.Password != form.ConfirmPassword {
+		sl.ReportError(form.ConfirmPassword, "ConfirmPassword", "confirm_password", "pwdmatch", "")
+	}
+}
+
+func validate(g *gin.Engine) {
+	// validateに直接登録
+	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
+		v.RegisterValidation("username", usernameValidation)
+		v.RegisterStructValidation(passwordMatchValidation, RegisterForm{})
+	}
+
+	g.POST("/user", func(c *gin.Context) {
+		var user User
+		if err := c.ShouldBindJSON(&user); err != nil {
+			c.String(http.StatusBadRequest, "error: %v", err.Error())
+			return
+		}
+
+		c.String(http.StatusOK, "OK")
+	})
+
+	g.POST("/register", func(c *gin.Context) {
+		var form RegisterForm
+		if err := c.ShouldBindJSON(&form); err != nil {
 			c.String(http.StatusBadRequest, "error: %v", err.Error())
 			return
 		}
