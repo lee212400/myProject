@@ -17,7 +17,8 @@ func main() {
 	//	routing(router)
 	// request(router)
 	// requestStruct(router)
-	validate(router)
+	//validate(router)
+	response(router)
 
 	router.Run(":8888")
 }
@@ -229,5 +230,51 @@ func validate(g *gin.Engine) {
 			return
 		}
 		c.String(http.StatusOK, "OK")
+	})
+}
+
+type UserResponseData struct {
+	Name  string `json:"name""`
+	Email string `json:"email"`
+}
+
+func response(g *gin.Engine) {
+	// string
+	g.GET("/user", func(c *gin.Context) {
+		c.String(200, "Hello")
+	})
+
+	// json
+	g.GET("/user", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"name":   "lee",
+			"email":  "sample@test.com",
+			"status": true,
+		})
+	})
+
+	// struct json
+	g.GET("/user", func(c *gin.Context) {
+		c.JSON(200, UserResponseData{Name: "lee", Email: "sample@test.com"})
+	})
+
+	// xml
+	g.GET("/user", func(c *gin.Context) {
+		c.XML(200, UserResponseData{Name: "lee", Email: "sample@test.com"})
+	})
+
+	// html
+	g.LoadHTMLGlob("templates/*.html") // htmlファイルすべて呼び出しておく
+
+	// index.html返却
+	g.GET("/html", func(c *gin.Context) {
+		c.HTML(200, "index.html", gin.H{
+			"title": "Hello Gin",
+		})
+	})
+
+	// redirect
+	g.GET("/redirect", func(c *gin.Context) {
+		c.Redirect(302, "https://example.com")
 	})
 }
