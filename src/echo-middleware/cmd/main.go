@@ -13,10 +13,10 @@ import (
 
 func main() {
 	e := echo.New()
-	setMiddleware(e)
+	//setMiddleware(e)
+	testMiddlewar(e)
 	e.Logger.Fatal(e.Start(":8888"))
 }
-
 func setMiddleware(e *echo.Echo) {
 	// rogging + custom
 	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
@@ -77,4 +77,45 @@ func getKey(token *jwt.Token) (interface{}, error) {
 	}
 
 	return nil, nil
+}
+
+func myMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		// ミドルウェア: requestされたらログ出力
+		fmt.Println("test myMiddleware")
+		return next(c)
+	}
+}
+
+func myGroupMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		// ミドルウェア: requestされたらログ出力
+		fmt.Println("test myGroupMiddleware")
+		return next(c)
+	}
+}
+
+func testMiddlewar(e *echo.Echo) {
+	// router個別にミドルウェア設定
+	e.GET("/test", func(c echo.Context) error {
+		return c.String(http.StatusOK, "This is a secured API route")
+	}, myMiddleware)
+
+	// ミドルウェア設定なし
+	e.GET("/user", func(c echo.Context) error {
+		return c.String(http.StatusOK, "This is a secured API route")
+	})
+
+	// routerグループことにミドルウェア設定
+	apiGroup := e.Group("/api", myGroupMiddleware)
+
+	// /api/hello rout
+	apiGroup.GET("/hello", func(c echo.Context) error {
+		return c.String(http.StatusOK, "Hello from API group")
+	})
+
+	// /api/world rout
+	apiGroup.GET("/world", func(c echo.Context) error {
+		return c.String(http.StatusOK, "World from API group")
+	})
 }
