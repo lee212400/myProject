@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package sample;
+
+option go_package = ".;rpc"; // goコードが生成されるパス
+
+service SampleService {
+  rpc SayHello (HelloRequest) returns (HelloResponse) {}
+  rpc GetData(StreamRequest) returns (stream StreamResponse);
+}
+
+message HelloRequest {
+  string name = 1;
+}
+
+message HelloResponse {
+  string message = 1;
+}
+
+message StreamRequest {
+}
+
+message StreamResponse {
+  string name = 1;
+  string email = 2;
+}
