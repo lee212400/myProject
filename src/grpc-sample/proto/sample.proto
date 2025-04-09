@@ -10,6 +10,7 @@ service SampleService {
   rpc GetData(StreamRequest) returns (stream StreamResponse);
   rpc Search(SearchRequest) returns(SearchResponse);
   rpc GetUser(GetUserRequest) returns(GetUserResponse);
+  rpc ChatStream (stream ChatRequest) returns (ChatResponse);
 }
 
 message HelloRequest {
@@ -51,4 +52,14 @@ message GetUserRequest{
 
 message GetUserResponse{
   core.User user = 1;
+}
+
+message ChatRequest{
+  string user = 1;
+  string message = 2;
+}
+
+message ChatResponse{
+  string res_user = 1;
+  string res_message = 2;
 }

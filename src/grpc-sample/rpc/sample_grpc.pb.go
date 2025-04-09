@@ -20,6 +20,9 @@ const _ = grpc.SupportPackageIsVersion7
 type SampleServiceClient interface {
 	SayHello(ctx context.Context, in *HelloRequest, opts ...grpc.CallOption) (*HelloResponse, error)
 	GetData(ctx context.Context, in *StreamRequest, opts ...grpc.CallOption) (SampleService_GetDataClient, error)
+	Search(ctx context.Context, in *SearchRequest, opts ...grpc.CallOption) (*SearchResponse, error)
+	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error)
+	ChatStream(ctx context.Context, opts ...grpc.CallOption) (SampleService_ChatStreamClient, error)
 }
 
 type sampleServiceClient struct {
@@ -71,12 +74,67 @@ func (x *sampleServiceGetDataClient) Recv() (*StreamResponse, error) {
 	return m, nil
 }
 
+func (c *sampleServiceClient) Search(ctx context.Context, in *SearchRequest, opts ...grpc.CallOption) (*SearchResponse, error) {
+	out := new(SearchResponse)
+	err := c.cc.Invoke(ctx, "/sample.SampleService/Search", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *sampleServiceClient) GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error) {
+	out := new(GetUserResponse)
+	err := c.cc.Invoke(ctx, "/sample.SampleService/GetUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *sampleServiceClient) ChatStream(ctx context.Context, opts ...grpc.CallOption) (SampleService_ChatStreamClient, error) {
+	stream, err := c.cc.NewStream(ctx, &SampleService_ServiceDesc.Streams[1], "/sample.SampleService/ChatStream", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &sampleServiceChatStreamClient{stream}
+	return x, nil
+}
+
+type SampleService_ChatStreamClient interface {
+	Send(*ChatRequest) error
+	CloseAndRecv() (*ChatResponse, error)
+	grpc.ClientStream
+}
+
+type sampleServiceChatStreamClient struct {
+	grpc.ClientStream
+}
+
+func (x *sampleServiceChatStreamClient) Send(m *ChatRequest) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *sampleServiceChatStreamClient) CloseAndRecv() (*ChatResponse, error) {
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	m := new(ChatResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // SampleServiceServer is the server API for SampleService service.
 // All implementations must embed UnimplementedSampleServiceServer
 // for forward compatibility
 type SampleServiceServer interface {
 	SayHello(context.Context, *HelloRequest) (*HelloResponse, error)
 	GetData(*StreamRequest, SampleService_GetDataServer) error
+	Search(context.Context, *SearchRequest) (*SearchResponse, error)
+	GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error)
+	ChatStream(SampleService_ChatStreamServer) error
 	mustEmbedUnimplementedSampleServiceServer()
 }
 
@@ -89,6 +147,15 @@ func (UnimplementedSampleServiceServer) SayHello(context.Context, *HelloRequest)
 }
 func (UnimplementedSampleServiceServer) GetData(*StreamRequest, SampleService_GetDataServer) error {
 	return status.Errorf(codes.Unimplemented, "method GetData not implemented")
+}
+func (UnimplementedSampleServiceServer) Search(context.Context, *SearchRequest) (*SearchResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Search not implemented")
+}
+func (UnimplementedSampleServiceServer) GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUser not implemented")
+}
+func (UnimplementedSampleServiceServer) ChatStream(SampleService_ChatStreamServer) error {
+	return status.Errorf(codes.Unimplemented, "method ChatStream not implemented")
 }
 func (UnimplementedSampleServiceServer) mustEmbedUnimplementedSampleServiceServer() {}
 
@@ -142,6 +209,68 @@ func (x *sampleServiceGetDataServer) Send(m *StreamResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 
+func _SampleService_Search_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SearchRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SampleServiceServer).Search(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/sample.SampleService/Search",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SampleServiceServer).Search(ctx, req.(*SearchRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SampleService_GetUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SampleServiceServer).GetUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/sample.SampleService/GetUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SampleServiceServer).GetUser(ctx, req.(*GetUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SampleService_ChatStream_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(SampleServiceServer).ChatStream(&sampleServiceChatStreamServer{stream})
+}
+
+type SampleService_ChatStreamServer interface {
+	SendAndClose(*ChatResponse) error
+	Recv() (*ChatRequest, error)
+	grpc.ServerStream
+}
+
+type sampleServiceChatStreamServer struct {
+	grpc.ServerStream
+}
+
+func (x *sampleServiceChatStreamServer) SendAndClose(m *ChatResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *sampleServiceChatStreamServer) Recv() (*ChatRequest, error) {
+	m := new(ChatRequest)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // SampleService_ServiceDesc is the grpc.ServiceDesc for SampleService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -153,12 +282,25 @@ var SampleService_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "SayHello",
 			Handler:    _SampleService_SayHello_Handler,
 		},
+		{
+			MethodName: "Search",
+			Handler:    _SampleService_Search_Handler,
+		},
+		{
+			MethodName: "GetUser",
+			Handler:    _SampleService_GetUser_Handler,
+		},
 	},
 	Streams: []grpc.StreamDesc{
 		{
 			StreamName:    "GetData",
 			Handler:       _SampleService_GetData_Handler,
 			ServerStreams: true,
+		},
+		{
+			StreamName:    "ChatStream",
+			Handler:       _SampleService_ChatStream_Handler,
+			ClientStreams: true,
 		},
 	},
 	Metadata: "sample.proto",
