@@ -11,6 +11,7 @@ service SampleService {
   rpc Search(SearchRequest) returns(SearchResponse);
   rpc GetUser(GetUserRequest) returns(GetUserResponse);
   rpc ChatStream (stream ChatRequest) returns (ChatResponse);
+  rpc ChatToWay (stream Chat) returns (stream Chat);
 }
 
 message HelloRequest {
@@ -62,4 +63,9 @@ message ChatRequest{
 message ChatResponse{
   string res_user = 1;
   string res_message = 2;
+}
+
+message Chat{
+  string user = 1;
+  string message = 2;
 }

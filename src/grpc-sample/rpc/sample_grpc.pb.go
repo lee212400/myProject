@@ -23,6 +23,7 @@ type SampleServiceClient interface {
 	Search(ctx context.Context, in *SearchRequest, opts ...grpc.CallOption) (*SearchResponse, error)
 	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error)
 	ChatStream(ctx context.Context, opts ...grpc.CallOption) (SampleService_ChatStreamClient, error)
+	ChatToWay(ctx context.Context, opts ...grpc.CallOption) (SampleService_ChatToWayClient, error)
 }
 
 type sampleServiceClient struct {
@@ -126,6 +127,37 @@ func (x *sampleServiceChatStreamClient) CloseAndRecv() (*ChatResponse, error) {
 	return m, nil
 }
 
+func (c *sampleServiceClient) ChatToWay(ctx context.Context, opts ...grpc.CallOption) (SampleService_ChatToWayClient, error) {
+	stream, err := c.cc.NewStream(ctx, &SampleService_ServiceDesc.Streams[2], "/sample.SampleService/ChatToWay", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &sampleServiceChatToWayClient{stream}
+	return x, nil
+}
+
+type SampleService_ChatToWayClient interface {
+	Send(*Chat) error
+	Recv() (*Chat, error)
+	grpc.ClientStream
+}
+
+type sampleServiceChatToWayClient struct {
+	grpc.ClientStream
+}
+
+func (x *sampleServiceChatToWayClient) Send(m *Chat) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *sampleServiceChatToWayClient) Recv() (*Chat, error) {
+	m := new(Chat)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // SampleServiceServer is the server API for SampleService service.
 // All implementations must embed UnimplementedSampleServiceServer
 // for forward compatibility
@@ -135,6 +167,7 @@ type SampleServiceServer interface {
 	Search(context.Context, *SearchRequest) (*SearchResponse, error)
 	GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error)
 	ChatStream(SampleService_ChatStreamServer) error
+	ChatToWay(SampleService_ChatToWayServer) error
 	mustEmbedUnimplementedSampleServiceServer()
 }
 
@@ -156,6 +189,9 @@ func (UnimplementedSampleServiceServer) GetUser(context.Context, *GetUserRequest
 }
 func (UnimplementedSampleServiceServer) ChatStream(SampleService_ChatStreamServer) error {
 	return status.Errorf(codes.Unimplemented, "method ChatStream not implemented")
+}
+func (UnimplementedSampleServiceServer) ChatToWay(SampleService_ChatToWayServer) error {
+	return status.Errorf(codes.Unimplemented, "method ChatToWay not implemented")
 }
 func (UnimplementedSampleServiceServer) mustEmbedUnimplementedSampleServiceServer() {}
 
@@ -271,6 +307,32 @@ func (x *sampleServiceChatStreamServer) Recv() (*ChatRequest, error) {
 	return m, nil
 }
 
+func _SampleService_ChatToWay_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(SampleServiceServer).ChatToWay(&sampleServiceChatToWayServer{stream})
+}
+
+type SampleService_ChatToWayServer interface {
+	Send(*Chat) error
+	Recv() (*Chat, error)
+	grpc.ServerStream
+}
+
+type sampleServiceChatToWayServer struct {
+	grpc.ServerStream
+}
+
+func (x *sampleServiceChatToWayServer) Send(m *Chat) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *sampleServiceChatToWayServer) Recv() (*Chat, error) {
+	m := new(Chat)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // SampleService_ServiceDesc is the grpc.ServiceDesc for SampleService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -300,6 +362,12 @@ var SampleService_ServiceDesc = grpc.ServiceDesc{
 		{
 			StreamName:    "ChatStream",
 			Handler:       _SampleService_ChatStream_Handler,
+			ClientStreams: true,
+		},
+		{
+			StreamName:    "ChatToWay",
+			Handler:       _SampleService_ChatToWay_Handler,
+			ServerStreams: true,
 			ClientStreams: true,
 		},
 	},
