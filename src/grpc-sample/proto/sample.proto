@@ -3,13 +3,18 @@ syntax = "proto3";
 package sample;
 
 option go_package = ".;rpc"; // goコードが生成されるパス
-import "core.proto";  
+import "core.proto";
+import "google/api/annotations.proto";
 
 service SampleService {
   rpc SayHello (HelloRequest) returns (HelloResponse);
   rpc GetData(StreamRequest) returns (stream StreamResponse);
   rpc Search(SearchRequest) returns(SearchResponse);
-  rpc GetUser(GetUserRequest) returns(GetUserResponse);
+  rpc GetUser(GetUserRequest) returns(GetUserResponse){
+    option (google.api.http) = {
+      get: "/v1/user/{id}"
+    };
+  };
   rpc ChatStream (stream ChatRequest) returns (ChatResponse);
   rpc ChatToWay (stream Chat) returns (stream Chat);
 }
