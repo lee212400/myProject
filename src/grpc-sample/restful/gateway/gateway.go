@@ -31,8 +31,12 @@ func main() {
 		log.Fatalf("Failed to register gRPC-Gateway handler: %v", err)
 	}
 
+	gwServer := &http.Server{
+		Addr:    ":8080",
+		Handler: gwmux,
+	}
+
 	// HTTPサーバー開始 (gRPC-Gateway)
-	http.Handle("/", gwmux)
 	fmt.Println("gRPC-Gateway server started at :8080")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Fatal(gwServer.ListenAndServe())
 }

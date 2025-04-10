@@ -9,7 +9,9 @@ plugins:
   #  out: ../rpc
   #  opt: paths=source_relative
   - plugin: grpc-gateway
-    out: ../grpc
+    out: ../rpc
     opt: paths=source_relative
   - plugin: openapiv2
     out: ../grpc
+  - plugin: buf.build/bufbuild/validate-go
+    out: ../rpc
