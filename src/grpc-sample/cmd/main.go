@@ -10,6 +10,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
+	"google.golang.org/grpc/peer"
 	"google.golang.org/grpc/status"
 
 	pb "github.com/lee212400/myProject/rpc"
@@ -20,6 +21,7 @@ type server struct {
 }
 
 func (s *server) GetUser(ctx context.Context, req *pb.GetUserRequest) (*pb.GetUserResponse, error) {
+	fmt.Println("GetUser API Start ---------")
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
 		return nil, status.Error(codes.Unauthenticated, "No found metadata")
@@ -60,7 +62,9 @@ func (s *server) GetUser(ctx context.Context, req *pb.GetUserRequest) (*pb.GetUs
 
 func main() {
 	lis, _ := net.Listen("tcp", ":50051")
-	s := grpc.NewServer()
+	s := grpc.NewServer(
+		grpc.UnaryInterceptor(unaryInterceptor),
+	)
 	pb.RegisterSampleServiceServer(s, &server{})
 	log.Println("Server running at :50051")
 	s.Serve(lis)
@@ -73,4 +77,31 @@ func getData(ctx *context.Context) (map[string]string, error) {
 		"email": "sample@test.com",
 	}
 	return res, nil
+}
+
+func unaryInterceptor(
+	ctx context.Context,
+	req interface{},
+	info *grpc.UnaryServerInfo,
+	handler grpc.UnaryHandler,
+) (interface{}, error) {
+	fmt.Println("Interceptor start ---------")
+	// API service FullMethod
+	fullMethod := info.FullMethod // "/ServiceName/MethodName"
+	path := strings.Split(fullMethod, "/")
+
+	// 実行されるメソッド名
+	fmt.Println("API Method Called:", path[len(path)-1])
+
+	// クライアント情報抽出
+	p, ok := peer.FromContext(ctx)
+	if ok {
+		fmt.Println("Client IP:", p.Addr)
+	}
+
+	// requestデータ
+	fmt.Println("request::::", req)
+
+	// grpcメソッド呼び出す
+	return handler(ctx, req)
 }
