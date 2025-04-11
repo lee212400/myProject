@@ -35,6 +35,212 @@ var (
 	_ = sort.Sort
 )
 
+// Validate checks the field values on GetMessageRequest with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *GetMessageRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetMessageRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetMessageRequestMultiError, or nil if none found.
+func (m *GetMessageRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetMessageRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return GetMessageRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetMessageRequestMultiError is an error wrapping multiple validation errors
+// returned by GetMessageRequest.ValidateAll() if the designated constraints
+// aren't met.
+type GetMessageRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetMessageRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetMessageRequestMultiError) AllErrors() []error { return m }
+
+// GetMessageRequestValidationError is the validation error returned by
+// GetMessageRequest.Validate if the designated constraints aren't met.
+type GetMessageRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetMessageRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetMessageRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetMessageRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetMessageRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetMessageRequestValidationError) ErrorName() string {
+	return "GetMessageRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetMessageRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetMessageRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetMessageRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetMessageRequestValidationError{}
+
+// Validate checks the field values on GetMessageResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetMessageResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetMessageResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetMessageResponseMultiError, or nil if none found.
+func (m *GetMessageResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetMessageResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Message
+
+	if len(errors) > 0 {
+		return GetMessageResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetMessageResponseMultiError is an error wrapping multiple validation errors
+// returned by GetMessageResponse.ValidateAll() if the designated constraints
+// aren't met.
+type GetMessageResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetMessageResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetMessageResponseMultiError) AllErrors() []error { return m }
+
+// GetMessageResponseValidationError is the validation error returned by
+// GetMessageResponse.Validate if the designated constraints aren't met.
+type GetMessageResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetMessageResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetMessageResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetMessageResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetMessageResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetMessageResponseValidationError) ErrorName() string {
+	return "GetMessageResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetMessageResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetMessageResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetMessageResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetMessageResponseValidationError{}
+
 // Validate checks the field values on CreateUserRequest with the rules defined
 // in the proto definition for this message. If any rules are violated, the
 // first error encountered is returned, or nil if there are no violations.

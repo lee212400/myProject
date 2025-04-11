@@ -14,6 +14,92 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
+// LeeServiceClient is the client API for LeeService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type LeeServiceClient interface {
+	GetMessage(ctx context.Context, in *GetMessageRequest, opts ...grpc.CallOption) (*GetMessageResponse, error)
+}
+
+type leeServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewLeeServiceClient(cc grpc.ClientConnInterface) LeeServiceClient {
+	return &leeServiceClient{cc}
+}
+
+func (c *leeServiceClient) GetMessage(ctx context.Context, in *GetMessageRequest, opts ...grpc.CallOption) (*GetMessageResponse, error) {
+	out := new(GetMessageResponse)
+	err := c.cc.Invoke(ctx, "/sample.LeeService/GetMessage", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// LeeServiceServer is the server API for LeeService service.
+// All implementations must embed UnimplementedLeeServiceServer
+// for forward compatibility
+type LeeServiceServer interface {
+	GetMessage(context.Context, *GetMessageRequest) (*GetMessageResponse, error)
+	mustEmbedUnimplementedLeeServiceServer()
+}
+
+// UnimplementedLeeServiceServer must be embedded to have forward compatible implementations.
+type UnimplementedLeeServiceServer struct {
+}
+
+func (UnimplementedLeeServiceServer) GetMessage(context.Context, *GetMessageRequest) (*GetMessageResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetMessage not implemented")
+}
+func (UnimplementedLeeServiceServer) mustEmbedUnimplementedLeeServiceServer() {}
+
+// UnsafeLeeServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to LeeServiceServer will
+// result in compilation errors.
+type UnsafeLeeServiceServer interface {
+	mustEmbedUnimplementedLeeServiceServer()
+}
+
+func RegisterLeeServiceServer(s grpc.ServiceRegistrar, srv LeeServiceServer) {
+	s.RegisterService(&LeeService_ServiceDesc, srv)
+}
+
+func _LeeService_GetMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetMessageRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LeeServiceServer).GetMessage(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/sample.LeeService/GetMessage",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LeeServiceServer).GetMessage(ctx, req.(*GetMessageRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// LeeService_ServiceDesc is the grpc.ServiceDesc for LeeService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var LeeService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "sample.LeeService",
+	HandlerType: (*LeeServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "GetMessage",
+			Handler:    _LeeService_GetMessage_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "sample.proto",
+}
+
 // SampleServiceClient is the client API for SampleService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.

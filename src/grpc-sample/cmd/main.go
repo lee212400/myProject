@@ -11,6 +11,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/peer"
+	"google.golang.org/grpc/reflection"
 	"google.golang.org/grpc/status"
 
 	pb "github.com/lee212400/myProject/rpc"
@@ -67,6 +68,9 @@ func main() {
 	)
 	pb.RegisterSampleServiceServer(s, &server{})
 	log.Println("Server running at :50051")
+
+	reflection.Register(s)
+
 	s.Serve(lis)
 }
 
