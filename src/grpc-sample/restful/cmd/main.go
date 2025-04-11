@@ -41,6 +41,7 @@ func (s *server) CreateUser(ctx context.Context, req *pb.CreateUserRequest) (*pb
 	if err := myValidate.Validate(req); err != nil {
 		return &pb.CreateUserResponse{}, err
 	}
+	fmt.Println("Email::", req.Email)
 	email := req.Email
 	fm := req.FirstName
 	lm := req.LastName
