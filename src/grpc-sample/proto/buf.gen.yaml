@@ -1,0 +1,8 @@
+version: v2
+plugins:
+  - remote: buf.build/grpc-ecosystem/gateway:v2.16.2
+    out: ../rpc
+    opt:
+      - paths=source_relative
+  - remote: buf.build/grpc-ecosystem/openapiv2:v2.16.2
+    out: ../api
