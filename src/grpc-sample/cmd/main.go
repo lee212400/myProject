@@ -28,6 +28,7 @@ func (s *server) GetUser(ctx context.Context, req *pb.GetUserRequest) (*pb.GetUs
 	auth := md["authorization"]
 	lang := md["lang"]
 	reqId := md["x-request-id"]
+	traceId := md["x-trace-id"]
 
 	if len(auth) == 0 {
 		return nil, status.Error(codes.Unauthenticated, "No authorization")
@@ -45,7 +46,8 @@ func (s *server) GetUser(ctx context.Context, req *pb.GetUserRequest) (*pb.GetUs
 
 	fmt.Println("requst header token:", tk[1])
 	fmt.Println("requst header lang:", lang[0])
-	fmt.Println("requst header id:", reqId[0])
+	fmt.Println("requst header reqId:", reqId[0])
+	fmt.Println("requst header traceId:", traceId[0])
 
 	return &pb.GetUserResponse{
 		User: &pb.User{
