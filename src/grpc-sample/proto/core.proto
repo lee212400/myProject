@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package core;
+
+option go_package = ".;rpc"; // goコードが生成されるパス
+
+import "google/protobuf/timestamp.proto";  
+import "google/protobuf/any.proto";  
+
+message User{
+    string email = 1;
+    string firstName = 2;
+    string lastName = 3;
+    int32 age = 4;
+    repeated string policy = 5;
+    UserRole role = 6;
+    google.protobuf.Timestamp created_at = 7;  
+    google.protobuf.Any details = 8 ;
+}
+
+enum UserRole {  
+    ROLE_UNSPECIFIED = 0;
+    ROLE_ADMIN = 1;  
+    ROLE_USER = 2;  
+    ROLE_GUEST = 3;  
+}
