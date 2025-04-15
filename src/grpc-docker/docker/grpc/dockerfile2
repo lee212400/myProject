@@ -1,0 +1,57 @@
+FROM golang:1.24-alpine AS builder
+
+RUN apk add --no-cache git curl bash protobuf
+
+WORKDIR /work
+
+COPY go.mod go.sum ./
+RUN go mod download
+
+COPY proto/ proto/
+COPY cmd/ cmd/
+
+# pluginインストール
+RUN go install \
+    google.golang.org/protobuf/cmd/protoc-gen-go@latest && \
+    go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest && \
+    go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@latest
+
+ENV PATH="/go/bin:${PATH}"
+
+# Google API protoダウンロード(grpc-gateway用)
+RUN mkdir -p proto/google/api proto/google/protobuf && \
+    curl -sSL https://raw.githubusercontent.com/googleapis/googleapis/master/google/api/annotations.proto -o proto/google/api/annotations.proto && \
+    curl -sSL https://raw.githubusercontent.com/googleapis/googleapis/master/google/api/http.proto -o proto/google/api/http.proto && \
+    curl -sSL https://raw.githubusercontent.com/protocolbuffers/protobuf/main/src/google/protobuf/descriptor.proto -o proto/google/protobuf/descriptor.proto
+
+# protoc実行 (go + grpc + grpc-gatewayのpbファイル生成)
+RUN mkdir -p rpc
+
+RUN protoc \
+  -I proto \
+  -I proto/google \
+  -I proto/google/protobuf \
+  -I proto/google/api \
+  -I rpc \
+  --go_out=rpc --go_opt=paths=source_relative \
+  --go-grpc_out=rpc --go-grpc_opt=paths=source_relative \
+  --grpc-gateway_out=rpc --grpc-gateway_opt=paths=source_relative \
+  proto/*.proto
+
+# protobuf作成あとは不要なファイルなので削除
+RUN rm -rf proto/google
+
+# gRPCサーバービルド(debuf情報は除外する)
+RUN go build -ldflags="-s -w" -o app ./cmd/main.go
+
+FROM alpine:latest
+
+WORKDIR /work
+# ビルド結果コピー
+COPY --from=builder /work/app .
+
+# gRPCポート
+EXPOSE 50051
+
+# コンテナ実行・サーバー実行
+CMD ["./app"]
