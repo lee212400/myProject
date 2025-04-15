@@ -1,0 +1,10 @@
+services:
+  grpc-server:
+    build:
+      context: ../
+      dockerfile: docker/grpc/Dockerfile
+    ports:
+      - "50051:50051"
+      - "8080:8080"
+    working_dir: /work
+    command: ["./app"]

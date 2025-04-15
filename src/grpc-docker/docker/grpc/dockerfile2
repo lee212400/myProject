@@ -41,7 +41,6 @@ RUN protoc \
 # protobuf作成あとは不要なファイルなので削除
 RUN rm -rf proto/google
 
-# gRPCサーバービルド(debuf情報は除外する)
 RUN go build -ldflags="-s -w" -o app ./cmd/main.go
 
 FROM alpine:latest
@@ -49,9 +48,3 @@ FROM alpine:latest
 WORKDIR /work
 # ビルド結果コピー
 COPY --from=builder /work/app .
-
-# gRPCポート
-EXPOSE 50051
-
-# コンテナ実行・サーバー実行
-CMD ["./app"]
