@@ -1,0 +1,14 @@
+services:
+  app:
+    build:
+      context: ../../
+      dockerfile: docker/app/dockerfile
+    ports:
+      - "50051:50051"
+      - "8080:8080"
+    depends_on:
+      - protoc
+    volumes:
+      - ./rpc:/rpc
+    working_dir: /work
+    command: ["./app"]

@@ -1,0 +1,8 @@
+services:
+  protoc:
+    build:
+      context: ../../
+      dockerfile: docker/protoc/dockerfile
+    volumes:
+      - ./rpc:/rpc  # protoc에서 생성한 rpc 파일을 공유
+    working_dir: /work
