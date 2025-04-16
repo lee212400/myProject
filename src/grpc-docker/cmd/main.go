@@ -93,7 +93,7 @@ func open(path string, count uint) *sql.DB {
 }
 
 func connectDB() (*sql.Tx, error) {
-	var path string = fmt.Sprintf("%s:%s@tcp(db:3306)/%s?charset=utf8&parseTime=true",
+	var path string = fmt.Sprintf("%s:%s@tcp(mysql:3306)/%s?charset=utf8&parseTime=true",
 		"root", "password", "sampledb")
 
 	return open(path, 100).Begin()
