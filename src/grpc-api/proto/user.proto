@@ -4,6 +4,7 @@ package user;
 
 option go_package = ".;rpc"; // goコードが生成されるパス
 
+import "proto/core.proto";
 import "google/api/annotations.proto";
 import "buf/validate/validate.proto";
 
