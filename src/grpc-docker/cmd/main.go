@@ -51,6 +51,7 @@ func main() {
 func init() {
 	var err error
 	tx, err := connectDB()
+	defer recoverFromPanic()
 	defer func() {
 		if err != nil {
 			tx.Rollback()
@@ -170,4 +171,10 @@ func getUser(tx *sql.Tx) ([]string, error) {
 	}
 
 	return u, nil
+}
+
+func recoverFromPanic() {
+	if r := recover(); r != nil {
+		fmt.Println("Recovered from panic:", r)
+	}
 }

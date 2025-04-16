@@ -7,7 +7,6 @@ services:
       - "50051:50051"
       - "8080:8080"
     depends_on:
-      - mysql
       - protoc
     volumes:
       - ./rpc:/rpc
@@ -15,3 +14,9 @@ services:
       - DB_DSN=root:password@tcp(mysql:3306)/sampledb
     working_dir: /work
     command: ["./app"]
+    networks:
+      - mysql_mysql_default
+
+networks:
+  mysql_mysql_default:
+    external: true
