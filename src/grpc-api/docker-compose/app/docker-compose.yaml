@@ -1,0 +1,19 @@
+services:
+  app:
+    build:
+      context: ../../
+      dockerfile: dockerfile/app/dockerfile
+    ports:
+      - "50051:50051"
+      - "8080:8080"
+    environment:
+      - DB_DSN=user:password@tcp(mysql:3306)/mydb
+    working_dir: /work
+    command: ["./app"]
+    networks:
+      - mysql_default
+
+networks:
+  mysql_default:
+    external: true
+    name: mysql_default
