@@ -6,6 +6,7 @@ import (
 	"github.com/lee212400/myProject/usecase/dto"
 
 	pb "github.com/lee212400/myProject/rpc/proto"
+	validate "github.com/lee212400/myProject/utils/validate"
 )
 
 type UserController struct {
@@ -19,12 +20,20 @@ func NewUserController(inputPort usecase.UserInputPort) *UserController {
 }
 
 func (i *UserController) GetUser(ctx *entity.Context, in *pb.GetUserRequest) error {
+	if err := validate.Validate.Validate(in); err != nil {
+		return err
+	}
+
 	dto := &dto.GetUserInputDto{
 		UserId: in.UserId,
 	}
 	return i.inputPort.GetUser(ctx, dto)
 }
 func (i *UserController) CreateUser(ctx *entity.Context, in *pb.CreateUserRequest) error {
+	if err := validate.Validate.Validate(in); err != nil {
+		return err
+	}
+
 	dto := &dto.CreateUserInputDto{
 		User: &entity.User{
 			FirstName: in.User.FirstName,
@@ -36,6 +45,10 @@ func (i *UserController) CreateUser(ctx *entity.Context, in *pb.CreateUserReques
 	return i.inputPort.CreateUser(ctx, dto)
 }
 func (i *UserController) UpdateUser(ctx *entity.Context, in *pb.UpdateUserRequest) error {
+	if err := validate.Validate.Validate(in); err != nil {
+		return err
+	}
+
 	dto := &dto.UpdateUserInputDto{
 		UserId: in.UserId,
 		Age:    in.Age,
@@ -43,6 +56,10 @@ func (i *UserController) UpdateUser(ctx *entity.Context, in *pb.UpdateUserReques
 	return i.inputPort.UpdateUser(ctx, dto)
 }
 func (i *UserController) DeleteUser(ctx *entity.Context, in *pb.DeleteUserRequest) error {
+	if err := validate.Validate.Validate(in); err != nil {
+		return err
+	}
+
 	dto := &dto.DeleteUserInputDto{
 		UserId: in.UserId,
 	}
