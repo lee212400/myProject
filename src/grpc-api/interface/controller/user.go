@@ -25,11 +25,26 @@ func (i *UserController) GetUser(ctx *entity.Context, in *pb.GetUserRequest) err
 	return i.inputPort.GetUser(ctx, dto)
 }
 func (i *UserController) CreateUser(ctx *entity.Context, in *pb.CreateUserRequest) error {
-	return nil
+	dto := &dto.CreateUserInputDto{
+		User: &entity.User{
+			FirstName: in.User.FirstName,
+			LastName:  in.User.LastName,
+			Email:     in.User.Email,
+			Age:       in.User.Age,
+		},
+	}
+	return i.inputPort.CreateUser(ctx, dto)
 }
 func (i *UserController) UpdateUser(ctx *entity.Context, in *pb.UpdateUserRequest) error {
-	return nil
+	dto := &dto.UpdateUserInputDto{
+		UserId: in.UserId,
+		Age:    in.Age,
+	}
+	return i.inputPort.UpdateUser(ctx, dto)
 }
 func (i *UserController) DeleteUser(ctx *entity.Context, in *pb.DeleteUserRequest) error {
-	return nil
+	dto := &dto.DeleteUserInputDto{
+		UserId: in.UserId,
+	}
+	return i.inputPort.DeleteUser(ctx, dto)
 }

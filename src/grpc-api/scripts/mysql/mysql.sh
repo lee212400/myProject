@@ -8,7 +8,7 @@ docker compose -f "$ROOT_DIR/docker-compose/mysql/docker-compose.yaml" up -d
 MAX_RETRIES=20
 RETRY_COUNT=0
 
-until docker exec mysql-server mysql -u root -ppassword -e "SHOW DATABASES LIKE 'mydb';" ; do
+until docker exec mysql-server mysql -u root -ppassword -e "SHOW DATABASES LIKE 'mydb';" &> /dev/null ; do
   RETRY_COUNT=$((RETRY_COUNT+1))
   
   if [ "$RETRY_COUNT" -ge "$MAX_RETRIES" ]; then

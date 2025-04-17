@@ -17,10 +17,11 @@ import (
 // Injectors from wire.go:
 
 func UserInit() *controller.UserController {
+	postProcessRepositoryImpl := repository.NewPostProcessRepositoryImpl()
 	sqlDB := db.NewDb()
 	userRepositoryImpl := repository.NewUserRepositoryImpl(sqlDB)
 	userPresenter := presenter.NewUserPresenter()
-	userInteractor := usecase.NewUserInteractor(userRepositoryImpl, userPresenter)
+	userInteractor := usecase.NewUserInteractor(postProcessRepositoryImpl, userRepositoryImpl, userPresenter)
 	userController := controller.NewUserController(userInteractor)
 	return userController
 }

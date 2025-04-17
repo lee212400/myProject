@@ -11,9 +11,9 @@ services:
     working_dir: /work
     command: ["./app"]
     networks:
-      - mysql_default
+      - mysql_mysql_default
 
 networks:
-  mysql_default:
+  mysql_mysql_default:
     external: true
-    name: mysql_default
+    name: mysql_mysql_default
