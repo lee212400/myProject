@@ -2,6 +2,7 @@ package repository
 
 import (
 	"database/sql"
+	"fmt"
 
 	"github.com/lee212400/myProject/domain/entity"
 )
@@ -15,6 +16,7 @@ func NewUserRepositoryImpl(db *sql.DB) *UserRepositoryImpl {
 }
 
 func (i *UserRepositoryImpl) GetUser(ctx *entity.Context, userId string) (*entity.User, error) {
+	fmt.Println("Repository GetUser")
 	return &entity.User{}, nil
 }
 func (i *UserRepositoryImpl) CreateUser(ctx *entity.Context, firstName string, lastName string, email string, age int32) (*entity.User, error) {
