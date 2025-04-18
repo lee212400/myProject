@@ -25,19 +25,19 @@ func (i *UserRepositoryImpl) GetUser(ctx *entity.Context, userId string) (*entit
 	fmt.Println("Repository GetUser")
 	db, err := db.GetDb(ctx, i.db)
 	if err != nil {
-		return &entity.User{}, ue.WithError(ue.Internal, err)
+		return &entity.User{}, ue.WithError(ctx, ue.Internal, err)
 	}
 
 	query := "select user_id,first_name,last_name,email,age from users where user_id = ?"
 
-	r := db.QueryRowContext(ctx.Ctx, query, userId)
+	r := db.QueryRowContext(ctx, query, userId)
 	var user entity.User
 	err = r.Scan(&user.UserId, &user.FirstName, &user.LastName, &user.Email, &user.Age)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return &entity.User{}, ue.New(ue.NotFound, "No found user")
+			return &entity.User{}, ue.New(ctx, ue.NotFound, "No found user")
 		}
-		return &entity.User{}, ue.WithError(ue.Internal, err)
+		return &entity.User{}, ue.WithError(ctx, ue.Internal, err)
 	}
 
 	return &user, nil
@@ -45,7 +45,7 @@ func (i *UserRepositoryImpl) GetUser(ctx *entity.Context, userId string) (*entit
 func (i *UserRepositoryImpl) CreateUser(ctx *entity.Context, firstName string, lastName string, email string, age int32) (string, error) {
 	db, err := db.GetDb(ctx, i.db)
 	if err != nil {
-		return "", ue.WithError(ue.Internal, err)
+		return "", ue.WithError(ctx, ue.Internal, err)
 	}
 
 	query := `
@@ -54,9 +54,9 @@ func (i *UserRepositoryImpl) CreateUser(ctx *entity.Context, firstName string, l
 	`
 	userId := generateRandomString(20)
 
-	_, err = db.ExecContext(ctx.Ctx, query, userId, firstName, lastName, email, age)
+	_, err = db.ExecContext(ctx, query, userId, firstName, lastName, email, age)
 	if err != nil {
-		return "", ue.WithError(ue.Internal, err)
+		return "", ue.WithError(ctx, ue.Internal, err)
 	}
 
 	return userId, nil
@@ -64,14 +64,14 @@ func (i *UserRepositoryImpl) CreateUser(ctx *entity.Context, firstName string, l
 func (i *UserRepositoryImpl) UpdateUser(ctx *entity.Context, userId string, age int32) error {
 	db, err := db.GetDb(ctx, i.db)
 	if err != nil {
-		return ue.WithError(ue.Internal, err)
+		return ue.WithError(ctx, ue.Internal, err)
 	}
 
 	query := `update users set age = ? where user_id = ?`
 
 	_, err = db.Exec(query, age, userId)
 	if err != nil {
-		return ue.WithError(ue.Internal, err)
+		return ue.WithError(ctx, ue.Internal, err)
 	}
 	return nil
 }
@@ -85,7 +85,7 @@ func (i *UserRepositoryImpl) DeleteUser(ctx *entity.Context, userId string) erro
 
 	_, err = db.Exec(query, userId)
 	if err != nil {
-		return ue.WithError(ue.Internal, err)
+		return ue.WithError(ctx, ue.Internal, err)
 	}
 	return nil
 }

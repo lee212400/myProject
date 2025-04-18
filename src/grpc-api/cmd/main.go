@@ -61,7 +61,7 @@ func handler[T, R any](ctx *entity.Context, in T, f func(ctx *entity.Context, in
 	var res R
 	err := f(ctx, in)
 	if err, ok := err.(*ue.AppError); ok && err != nil {
-		return res, err.Generate()
+		return res, err.Generate(ctx)
 	}
 
 	return ctx.Response.(R), nil

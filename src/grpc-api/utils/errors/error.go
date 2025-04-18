@@ -3,6 +3,7 @@ package errors
 import (
 	"fmt"
 
+	"github.com/lee212400/myProject/domain/entity"
 	"github.com/lee212400/myProject/utils/logger"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -48,36 +49,40 @@ func (e *AppError) Error() string {
 	return e.Message
 }
 
-func New(code AppCode, msg string) *AppError {
-	logMessage(code, msg)
+func New(ctx *entity.Context, code AppCode, msg string) *AppError {
+	logMessage(ctx, code, msg)
 	return &AppError{
 		Code:    code,
 		Message: msg,
 	}
 }
 
-func WithError(code AppCode, err error) *AppError {
-	logMessage(code, err.Error())
+func WithError(ctx *entity.Context, code AppCode, err error) *AppError {
+	logMessage(ctx, code, err.Error())
 	return &AppError{
 		Code: code,
 		Err:  err,
 	}
 }
 
-func (e *AppError) Generate() error {
+func (e *AppError) Generate(ctx *entity.Context) error {
+	msg := ""
+	if e.Message != "" || len(e.Message) > 0 {
+		msg = e.Message
+	} else {
+		msg = e.Err.Error()
+	}
+
 	switch e.Code.LogLevel {
 	case WarnLevel, ErrorLevel:
-		logMessage(e.Code, e.Message)
+		logMessage(ctx, e.Code, msg)
 	}
 
-	if e.Message != "" {
-		return status.Error(e.Code.GRPCCode, e.Message)
-	}
-
-	return status.Error(e.Code.GRPCCode, e.Error())
+	return status.Error(e.Code.GRPCCode, msg)
 }
 
-func logMessage(code AppCode, msg string) {
+func logMessage(ctx *entity.Context, code AppCode, msg string) {
+	logger := logger.WithContext(ctx)
 	switch code.LogLevel {
 	case DebugLevel:
 		logger.Debug(msg)
