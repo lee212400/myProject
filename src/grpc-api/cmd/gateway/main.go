@@ -32,6 +32,6 @@ func main() {
 	}
 
 	// HTTPサーバー開始 (gRPC-Gateway)
-	fmt.Println("gRPC-Gateway server started at :8080")
-	log.Fatal(http.ListenAndServe(":8080", gwmux))
+	fmt.Println("gRPC-Gateway server started at :3030")
+	log.Fatal(http.ListenAndServe(":3030", gwmux))
 }

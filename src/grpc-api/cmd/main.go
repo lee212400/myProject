@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"net"
 
@@ -14,6 +13,7 @@ import (
 	"github.com/lee212400/myProject/register"
 	pb "github.com/lee212400/myProject/rpc/proto"
 	uc "github.com/lee212400/myProject/utils/context"
+	ue "github.com/lee212400/myProject/utils/errors"
 )
 
 type userService struct {
@@ -60,14 +60,9 @@ func main() {
 func handler[T, R any](ctx *entity.Context, in T, f func(ctx *entity.Context, in T) error) (R, error) {
 	var res R
 	err := f(ctx, in)
-	if err != nil {
-		log.Println("error message,", err)
-		return res, err
+	if err, ok := err.(*ue.AppError); ok && err != nil {
+		return res, err.Generate()
 	}
 
-	if res, ok := ctx.Response.(R); ok {
-		log.Println("error message,", err)
-		return res, nil
-	}
-	return res, fmt.Errorf("invalid response type")
+	return ctx.Response.(R), nil
 }

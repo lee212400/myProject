@@ -6,6 +6,7 @@ import (
 	"github.com/lee212400/myProject/usecase/dto"
 
 	pb "github.com/lee212400/myProject/rpc/proto"
+	ue "github.com/lee212400/myProject/utils/errors"
 	validate "github.com/lee212400/myProject/utils/validate"
 )
 
@@ -21,7 +22,7 @@ func NewUserController(inputPort usecase.UserInputPort) *UserController {
 
 func (i *UserController) GetUser(ctx *entity.Context, in *pb.GetUserRequest) error {
 	if err := validate.Validate.Validate(in); err != nil {
-		return err
+		return ue.New(ue.InvalidArgument, "Invaild request data")
 	}
 
 	dto := &dto.GetUserInputDto{
@@ -31,7 +32,7 @@ func (i *UserController) GetUser(ctx *entity.Context, in *pb.GetUserRequest) err
 }
 func (i *UserController) CreateUser(ctx *entity.Context, in *pb.CreateUserRequest) error {
 	if err := validate.Validate.Validate(in); err != nil {
-		return err
+		return ue.New(ue.InvalidArgument, "Invaild request data")
 	}
 
 	dto := &dto.CreateUserInputDto{
@@ -46,7 +47,7 @@ func (i *UserController) CreateUser(ctx *entity.Context, in *pb.CreateUserReques
 }
 func (i *UserController) UpdateUser(ctx *entity.Context, in *pb.UpdateUserRequest) error {
 	if err := validate.Validate.Validate(in); err != nil {
-		return err
+		return ue.New(ue.InvalidArgument, "Invaild request data")
 	}
 
 	dto := &dto.UpdateUserInputDto{
@@ -57,7 +58,7 @@ func (i *UserController) UpdateUser(ctx *entity.Context, in *pb.UpdateUserReques
 }
 func (i *UserController) DeleteUser(ctx *entity.Context, in *pb.DeleteUserRequest) error {
 	if err := validate.Validate.Validate(in); err != nil {
-		return err
+		return ue.New(ue.InvalidArgument, "Invaild request data")
 	}
 
 	dto := &dto.DeleteUserInputDto{

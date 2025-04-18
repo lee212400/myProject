@@ -10,4 +10,5 @@ bash "$ROOT_DIR/scripts/mysql/mysql.sh"
 
 bash "$ROOT_DIR/scripts/proto/proto.sh"
 
+go run "$ROOT_DIR/cmd/gateway/main.go" & \
 docker compose -f "$ROOT_DIR/docker-compose/app/docker-compose.yaml" up --build
