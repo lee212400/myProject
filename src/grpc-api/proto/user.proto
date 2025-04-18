@@ -1,0 +1,70 @@
+syntax = "proto3";
+
+package user;
+
+option go_package = ".;rpc"; // goコードが生成されるパス
+
+import "proto/core.proto";
+import "google/api/annotations.proto";
+import "buf/validate/validate.proto";
+
+service UserService {
+    rpc GetUser(GetUserRequest)returns(GetUserResponse){
+        option (google.api.http) = {
+          get: "/v1/user/{user_id}"
+        };
+    };
+
+    rpc CreateUser(CreateUserRequest)returns(CreateUserResponse){
+        option (google.api.http) = {
+          post: "/v1/user"
+          body: "*"
+        };
+    };
+    
+    rpc UpdateUser(UpdateUserRequest)returns(UpdateUserResponse){
+    option (google.api.http) = {
+        put: "/v1/user/{user_id}"
+        body: "*"
+    };
+    };
+
+    rpc DeleteUser(DeleteUserRequest)returns(DeleteUserResponse){
+    option (google.api.http) = {
+        delete: "/v1/user/{user_id}"
+    };
+    };
+}
+
+message GetUserRequest{
+    string user_id = 1 [(buf.validate.field).string = {pattern:"^[a-zA-Z0-9]{20}$" }];
+}
+  
+message GetUserResponse{
+    core.User user = 1;
+}
+
+message CreateUserRequest{
+    core.User user = 1;
+}
+  
+message CreateUserResponse{
+    core.User user = 1;
+}
+  
+message UpdateUserRequest{
+    string user_id = 1 [(buf.validate.field).string = {pattern:"^[a-zA-Z0-9]{20}$" }];
+    int32 age = 2 [(buf.validate.field).int32 = {gte: 1}];
+}
+  
+message UpdateUserResponse{
+    core.User user = 1;
+}
+  
+message DeleteUserRequest{
+    string user_id = 1 [(buf.validate.field).string = {pattern:"^[a-zA-Z0-9]{20}$" }];
+}
+  
+message DeleteUserResponse{
+  
+}

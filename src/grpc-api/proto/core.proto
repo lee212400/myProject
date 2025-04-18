@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package core;
+
+option go_package = ".;rpc"; // goコードが生成されるパス
+
+import "google/protobuf/timestamp.proto";
+import "buf/validate/validate.proto";
+
+message User{
+    string user_id = 1;
+    string email = 2 [(buf.validate.field).string.email = true];
+    string firstName = 3;
+    string lastName = 4;
+    int32 age = 5;
+    google.protobuf.Timestamp created_at = 6;
+}
