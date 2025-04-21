@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myapp
+  namespace: ${NAMESPACE}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: myapp
+  template:
+    metadata:
+      labels:
+        app: myapp
+    replicas: 2
+    spec:
+      containers:
+        - name: myapp
+          image: ${IMAGE_NAME} # <- Minikube内部でbulidしたイメージ
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 50051  # gRPC
+            - containerPort: 8080   # HTTP or grpc-gateway
+          env:
+            - name: MYSQL_DATABASE
+              value: "mydb"
+            - name: MYSQL_USER
+              value: "user"
+            - name: MYSQL_PASSWORD
+              value: "password"
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: myapp
+  namespace: ${NAMESPACE}
+spec:
+  selector:
+    app: myapp
+  ports:
+    - name: grpc
+      port: 50051
+      targetPort: 50051
+    - name: http
+      port: 8080
+      targetPort: 8080
+  type: NodePort
