@@ -16,9 +16,16 @@ COPY ./register ./register
 COPY ./utils ./utils
 
 RUN go build -ldflags="-s -w" -o app ./cmd/main.go
+RUN go build -ldflags="-s -w" -o gateway ./cmd/gateway/main.go
 
 FROM alpine:latest
 
 WORKDIR /work
 # ビルド結果コピー
 COPY --from=builder /work/app .
+COPY --from=builder /work/gateway .
+
+ADD https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/v0.4.13/grpc_health_probe-linux-amd64 /usr/local/bin/grpc_health_probe
+RUN chmod +x /usr/local/bin/grpc_health_probe
+
+COPY ./docker-compose/app/deployment/run.sh .

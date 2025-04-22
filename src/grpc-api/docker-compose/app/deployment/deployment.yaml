@@ -8,6 +8,11 @@ spec:
   selector:
     matchLabels:
       app: myapp
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
   template:
     metadata:
       labels:
@@ -15,7 +20,7 @@ spec:
     spec:
       containers:
         - name: myapp
-          image: myapp:local_02 # <- Minikube内部でbulidしたイメージ
+          image: myapp:local_06 # <- Minikube内部でbulidしたイメージ
           imagePullPolicy: Never
           ports:
             - containerPort: 50051  # gRPC
@@ -27,8 +32,26 @@ spec:
               value: "user"
             - name: MYSQL_PASSWORD
               value: "password"
-          command: ["./app"]  
-
+          command: ["/bin/sh", "-c", "./run.sh"]  
+          resources:
+              requests:
+                memory: "100Mi"
+              limits:
+                memory: "200Mi"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /readiness
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 30
 ---
 apiVersion: v1
 kind: Service
