@@ -55,7 +55,11 @@ func main() {
 	pw := env.GetEnvString("MYSQL_PASSWORD")
 	po := env.GetEnvString("MYSQL_PORT")
 	db := env.GetEnvString("MYSQL_DATABASES")
-	log.Printf("host:%s, user:%s, password:%s, port:%s, database:%s", host, user, pw, po, db)
+	log.Printf("host:%s, user:%s, password:%s, port:%s, database:%s\n", host, user, pw, po, db)
+
+	keyName := env.GetEnvString("KEY_NAME")
+	appSecret := env.GetEnvString("APP_SECRET")
+	log.Printf("KEY_NAME:%s, appSecret:%s", keyName, appSecret)
 
 	pb.RegisterUserServiceServer(s, userService)
 	log.Println("Server running at :50051")

@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: myapp
-          image: myapp:local_07 # <- Minikube内部でbulidしたイメージ
+          image: myapp:local_09 # <- Minikube内部でbulidしたイメージ
           imagePullPolicy: Never
           ports:
             - containerPort: 50051  # gRPC
@@ -55,6 +55,8 @@ spec:
           envFrom:
             - configMapRef:
                 name: myapp-config
+            - secretRef:
+                name: myapp-secret
 ---
 apiVersion: v1
 kind: Service
