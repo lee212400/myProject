@@ -1,0 +1,5 @@
+#chart情報
+apiVersion: v2
+name: my-grpc-api
+version: 1.0.0
+description: My grpc app

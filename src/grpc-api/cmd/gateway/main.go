@@ -31,7 +31,16 @@ func main() {
 		log.Fatalf("Failed to register gRPC-Gateway handler: %v", err)
 	}
 
+	gwmux.HandlePath("GET", "/health", func(w http.ResponseWriter, r *http.Request, pathParams map[string]string) {
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprintln(w, "OK")
+	})
+	gwmux.HandlePath("GET", "/readiness", func(w http.ResponseWriter, r *http.Request, pathParams map[string]string) {
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprintln(w, "Ready")
+	})
+
 	// HTTPサーバー開始 (gRPC-Gateway)
-	fmt.Println("gRPC-Gateway server started at :3030")
-	log.Fatal(http.ListenAndServe(":3030", gwmux))
+	fmt.Println("gRPC-Gateway server started at :8080")
+	log.Fatal(http.ListenAndServe(":8080", gwmux))
 }

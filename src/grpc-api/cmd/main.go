@@ -13,6 +13,7 @@ import (
 	"github.com/lee212400/myProject/register"
 	pb "github.com/lee212400/myProject/rpc/proto"
 	uc "github.com/lee212400/myProject/utils/context"
+	env "github.com/lee212400/myProject/utils/env"
 	ue "github.com/lee212400/myProject/utils/errors"
 )
 
@@ -48,6 +49,20 @@ func main() {
 	userService := &userService{
 		userController: register.UserInit(),
 	}
+
+	host := env.GetEnvString("MYSQL_HOST")
+	user := env.GetEnvString("MYSQL_USER")
+	pw := env.GetEnvString("MYSQL_PASSWORD")
+	po := env.GetEnvString("MYSQL_PORT")
+	db := env.GetEnvString("MYSQL_DATABASES")
+	log.Printf("host:%s, user:%s, password:%s, port:%s, database:%s\n", host, user, pw, po, db)
+
+	keyName := env.GetEnvString("KEY_NAME")
+	appSecret := env.GetEnvString("APP_SECRET")
+	log.Printf("KEY_NAME:%s, appSecret:%s", keyName, appSecret)
+
+	myDomain := env.GetEnvString("MY_DOMAIN")
+	log.Printf("my_domain:%s", myDomain)
 
 	pb.RegisterUserServiceServer(s, userService)
 	log.Println("Server running at :50051")

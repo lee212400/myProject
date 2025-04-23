@@ -45,7 +45,7 @@ func CloseDb(ctx *entity.Context, sucess bool) {
 }
 
 func NewDb() *sql.DB {
-	dsn := "root:password@tcp(mysql:3306)/mydb?parseTime=true"
+	dsn := "root:password@tcp(mysql.default.svc.cluster.local:3306)/mydb?parseTime=true"
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
 		panic(fmt.Sprintf("failed to connect to DB: %v", err))

@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: myapp-config
+  namespace: my-api
+data:
+  LOG_LEVEL: "debug"
+  TIMEOUT: "30"
+  MYSQL_HOST: "mysql.default.svc.cluster.local"
+  MYSQL_USER: "root"
+  MYSQL_PASSWORD: "password"
+  MYSQL_PORT: "3306"
+  MYSQL_DATABASES: "mydb"
