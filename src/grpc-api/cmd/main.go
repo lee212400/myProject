@@ -61,6 +61,9 @@ func main() {
 	appSecret := env.GetEnvString("APP_SECRET")
 	log.Printf("KEY_NAME:%s, appSecret:%s", keyName, appSecret)
 
+	myDomain := env.GetEnvString("MY_DOMAIN")
+	log.Printf("my_domain:%s", myDomain)
+
 	pb.RegisterUserServiceServer(s, userService)
 	log.Println("Server running at :50051")
 
