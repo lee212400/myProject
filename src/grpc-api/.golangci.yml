@@ -5,4 +5,20 @@ run:
 
 linters:
   enable:
-    - errcheck        # エラーを無視しているコードを警告
+    - errcheck # エラーを無視しているコードを警告
+    - gocyclo # 関数の複雑度をチェック
+    - unparam # 未使用の関数引数を検出
+    
+  settings:
+    unparam:
+      check-exported: true
+    gocyclo:
+      min-complexity: 10
+
+# ルールを除外する方法
+#issues:
+#exclude-rules:
+  #- path: 除外するファイル
+  #  linters: # 除外するlint
+  #    - gocyclo
+  #    - funlen
