@@ -5,7 +5,7 @@ set -ex
 ROOT_DIR=$(cd "$(dirname "$0")/../.." && pwd)
 
 NAMESPACE="my-api"
-IMAGE_NAME="myapp:local_09"
+IMAGE_NAME="myapp:local_10"
 
 eval $(minikube -p minikube docker-env)
 

@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: myapp
-          image: myapp:local_09 # <- Minikube内部でbulidしたイメージ
+          image: myapp:local_10 # <- Minikube内部でbulidしたイメージ
           imagePullPolicy: Never
           ports:
             - containerPort: 50051  # gRPC
