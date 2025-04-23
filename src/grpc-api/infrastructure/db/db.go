@@ -38,8 +38,6 @@ func CloseDb(ctx *entity.Context, sucess bool) {
 				_ = tx.Rollback()
 			}
 			delete(ctx.Session, "mysql")
-		} else {
-
 		}
 	}
 }

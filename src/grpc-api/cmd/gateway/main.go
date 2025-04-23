@@ -22,7 +22,9 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to connect to gRPC server: %v", err)
 	}
-	defer conn.Close()
+	defer func() {
+		_ = conn.Close()
+	}()
 
 	// gRPC-Gateway router設定
 	gwmux := runtime.NewServeMux()
@@ -31,13 +33,13 @@ func main() {
 		log.Fatalf("Failed to register gRPC-Gateway handler: %v", err)
 	}
 
-	gwmux.HandlePath("GET", "/health", func(w http.ResponseWriter, r *http.Request, pathParams map[string]string) {
+	_ = gwmux.HandlePath("GET", "/health", func(w http.ResponseWriter, r *http.Request, pathParams map[string]string) {
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintln(w, "OK")
+		_, _ = fmt.Fprintln(w, "OK")
 	})
-	gwmux.HandlePath("GET", "/readiness", func(w http.ResponseWriter, r *http.Request, pathParams map[string]string) {
+	_ = gwmux.HandlePath("GET", "/readiness", func(w http.ResponseWriter, r *http.Request, pathParams map[string]string) {
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintln(w, "Ready")
+		_, _ = fmt.Fprintln(w, "Ready")
 	})
 
 	// HTTPサーバー開始 (gRPC-Gateway)
