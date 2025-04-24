@@ -35,5 +35,5 @@ jobs:
           echo "params: $PARAMS"
         env:
           LEVEL: ${{ inputs.logLevel }}
-          TAGS: ${{ inputs.environment }}
-          ENVIRONMENT: ${{ inputs.params }}
+          ENVIRONMENT: ${{ inputs.environment }}
+          PARAMS: ${{ inputs.params }}
