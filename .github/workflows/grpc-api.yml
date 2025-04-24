@@ -22,11 +22,23 @@ jobs:
       with:
         go-version: '1.24.0'
         
-    - name: Install dependencies
-      run: go mod tidy
+    - name: Cache Go modules
+      uses: actions/cache@v2
+      with:
+        path: ~/.cache/go-build
+        key: ${{ runner.os }}-go-${{ hashFiles('src/grpc-api/go.mod', 'src/grpc-api/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-
+          
+    - name: Install Go dependencies
+      run: |
+        cd src/grpc-api
+        go mod tidy
 
     - name: Build
-      run: go build -v ./...
+      run: |
+        cd src/grpc-api
+        go build -v ./...
 
     - name: Make script executable
       run: chmod +x src/grpc-api/workflow/ci.sh
