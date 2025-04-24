@@ -1,23 +1,23 @@
 #!/bin/bash
 set -euo pipefail
 
-LEVEL="info"
-ENVIRONMENT="dev"
-PARAMS="{}"
+MY_LEVEL="info"
+MY_ENVIRONMENT="dev"
+MY_PARAMS="{}"
 
 while [[ $# -gt 0 ]]; do
   key="$1"
   case $key in
     --level)
-      LEVEL="$2"
+      MY_LEVEL="$2"
       shift 2
       ;;
     --env)
-      ENVIRONMENT="$2"
+      MY_ENVIRONMENT="$2"
       shift 2
       ;;
     --params)
-      PARAMS="$2"
+      MY_PARAMS="$2"
       shift 2
       ;;
     *)
