@@ -21,7 +21,12 @@ jobs:
       uses: actions/setup-go@v4
       with:
         go-version: '1.24.0'
-          
+    
+    - name: Install golangci-lint
+      run: |
+        curl -sSfL https://github.com/golangci/golangci-lint/releases/download/v1.52.2/golangci-lint-1.52.2-linux-amd64.tar.gz | tar -xvzf - -C /usr/local/bin
+        golangci-lint --version
+        
     - name: Install Go dependencies
       run: |
         cd src/grpc-api
