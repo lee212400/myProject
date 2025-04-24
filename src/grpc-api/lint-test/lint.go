@@ -2,6 +2,7 @@ package linttest
 
 import (
 	"fmt"
+	"time"
 )
 
 func GoCyclo() {
@@ -57,4 +58,21 @@ func Unparam(key string) int {
 		return 1
 	}
 	return 0
+}
+
+func Arguments(a, b, c, d, e int) {
+	fmt.Println("Arguments:")
+}
+
+func Gosimple() {
+	start := time.Now()
+	time.Sleep(10 * time.Millisecond)
+	fmt.Println("Elapsed:", time.Now().Sub(start))
+}
+
+func Gosec() {
+	password := "password123" // G101: Hardcoded credentials
+	if password == "password123" {
+		fmt.Println("Login successful!")
+	}
 }
