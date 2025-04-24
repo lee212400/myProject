@@ -29,6 +29,15 @@ jobs:
   log-the-inputs:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Make script executable
+        run: chmod +x src/grpc-api/workflow/jobs/test.sh
+
+      - name: Run script with environment variables
+        run: src/grpc-api/workflow/jobs/test.sh
+
       - run: |
           echo "Log level: $LEVEL"
           echo "environment: $ENVIRONMENT"
