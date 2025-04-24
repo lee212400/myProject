@@ -1,12 +1,17 @@
 #!/bin/bash
 set -euo pipefail
 
-echo "Installing golangci-lint..."
-export PATH=$HOME/.local/bin:$PATH
-curl -sSfL https://github.com/golangci/golangci-lint/releases/download/v2.1.2/golangci-lint-2.1.2-linux-amd64.tar.gz | tar -xvzf - -C $HOME/.local/bin
+export PATH="$(go env GOPATH)/bin:${PATH}"
+mkdir -p "$(go env GOPATH)"/bin
 
-echo "golangci-lint version:"
-golangci-lint --versio
+# 2. Install golangci-lint into $GOPATH/bin
+curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/HEAD/install.sh \
+  | sh -s -- -b "$(go env GOPATH)/bin" v2.1.2
+
+# 3. Verify installation
+echo "golangci-lint version: $(golangci-lint --version)"
+
+go --verison
 
 echo "Running golangci-lint..."
 golangci-lint run ./... -v
