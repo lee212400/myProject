@@ -11,5 +11,7 @@ curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/HEAD/install
 # 3. Verify installation
 echo "golangci-lint version: $(golangci-lint --version)"
 
+cd src/grpc-api
+
 echo "Running golangci-lint..."
 golangci-lint run ./... -v
