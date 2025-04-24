@@ -1,6 +1,8 @@
 package linttest
 
-import "fmt"
+import (
+	"fmt"
+)
 
 func GoCyclo() {
 	age := 10
@@ -48,10 +50,11 @@ func GoCyclo() {
 
 }
 
-func Funlen(a int, b int, c int, d int, e int, f int) {
-	fmt.Println("Funlen test")
-}
+func Unparam(key string) int {
+	str := "myTest"
 
-func Unparam(a int) {
-	fmt.Println("Funlen test")
+	if str == "myTest" {
+		return 1
+	}
+	return 0
 }
