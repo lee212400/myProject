@@ -21,14 +21,6 @@ jobs:
       uses: actions/setup-go@v4
       with:
         go-version: '1.24.0'
-        
-    - name: Cache Go modules
-      uses: actions/cache@v2
-      with:
-        path: ~/.cache/go-build
-        key: ${{ runner.os }}-go-${{ hashFiles('src/grpc-api/go.mod', 'src/grpc-api/go.sum') }}
-        restore-keys: |
-          ${{ runner.os }}-go-
           
     - name: Install Go dependencies
       run: |
