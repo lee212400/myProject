@@ -3,10 +3,11 @@ package errors
 import (
 	"fmt"
 
-	"github.com/lee212400/myProject/domain/entity"
-	"github.com/lee212400/myProject/utils/logger"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+
+	"github.com/lee212400/myProject/domain/entity"
+	"github.com/lee212400/myProject/utils/logger"
 )
 
 type LogLevel string

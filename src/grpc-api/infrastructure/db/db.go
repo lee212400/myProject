@@ -6,6 +6,7 @@ import (
 	"log"
 
 	_ "github.com/go-sql-driver/mysql"
+
 	"github.com/lee212400/myProject/domain/entity"
 )
 

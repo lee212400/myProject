@@ -10,6 +10,6 @@ func GetEnvString(key string) string {
 }
 
 func GetEnvInt(key string) int {
-	i, _ := strconv.Atoi("123")
+	i, _ := strconv.Atoi(key)
 	return i
 }

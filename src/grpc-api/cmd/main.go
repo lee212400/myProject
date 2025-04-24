@@ -5,10 +5,11 @@ import (
 	"log"
 	"net"
 
-	"github.com/lee212400/myProject/domain/entity"
-	"github.com/lee212400/myProject/interface/controller"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
+
+	"github.com/lee212400/myProject/domain/entity"
+	"github.com/lee212400/myProject/interface/controller"
 
 	"github.com/lee212400/myProject/register"
 	pb "github.com/lee212400/myProject/rpc/proto"
