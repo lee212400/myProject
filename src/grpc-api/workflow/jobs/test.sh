@@ -1,0 +1,10 @@
+#!/bin/bash
+set -euo pipefail
+
+MY_LEVEL="${LEVEL}"
+MY_ENVIRONMENT="${ENVIRONMENT}"
+MY_PARAMS="${PARAMS}"
+
+echo "LEVEL: $MY_LEVEL"
+echo "ENVIRONMENT: $MY_ENVIRONMENT"
+echo "PARAMS: $MY_PARAMS"
