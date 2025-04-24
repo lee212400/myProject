@@ -1,0 +1,56 @@
+version: 2
+
+run:
+  timeout: 2m
+
+linters:
+  enable:
+    - errcheck # エラーを無視しているコードを警告
+    - gocyclo # 関数の複雑度をチェック
+    - unparam # 未使用の関数引数を検出
+    - revive # 引数の数制限等新たなlintを定義する
+    - gosec # セキュリティー関連
+    - depguard # pkg allow,deny設定
+    
+  settings:
+    unparam:
+      check-exported: true
+    gocyclo:
+      min-complexity: 10
+    revive:
+      rules:
+      - name: argument-limit
+        arguments: [3] # 引数の数制限
+    gosec:
+      includes:
+        - G101
+      config:
+        G101:
+          ignore_entropy: false
+          entropy_threshold: "1.0" # ハードコードの複雑さ基準
+    depguard:
+      rules:
+        main:
+          deny:
+            - pkg: fmt
+              desc: fmt deny
+
+# ルールを除外する方法
+#issues:
+#exclude-rules:
+  #- path: 除外するファイル
+  #  linters: # 除外するlint
+  #    - gocyclo
+  #    - funlen
+
+formatters:
+  enable:
+    - gofmt
+    - goimports
+  settings:
+    goimports:
+      # A list of prefixes, which, if set, checks import paths
+      # with the given prefixes are grouped after 3rd-party packages.
+      # Default: []
+      local-prefixes:
+        - github.com/lee212400/myProject

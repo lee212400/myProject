@@ -69,7 +69,7 @@ func main() {
 
 	reflection.Register(s)
 
-	s.Serve(lis)
+	_ = s.Serve(lis)
 }
 
 func handler[T, R any](ctx *entity.Context, in T, f func(ctx *entity.Context, in T) error) (R, error) {

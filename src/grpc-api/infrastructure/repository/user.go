@@ -91,11 +91,11 @@ func (i *UserRepositoryImpl) DeleteUser(ctx *entity.Context, userId string) erro
 }
 
 func generateRandomString(length int) string {
-	rand.Seed(time.Now().UnixNano())
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 
 	result := make([]byte, length)
 	for i := range result {
-		result[i] = charset[rand.Intn(len(charset))]
+		result[i] = charset[r.Intn(len(charset))]
 	}
 	return string(result)
 }
