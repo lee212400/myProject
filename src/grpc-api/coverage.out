@@ -1,0 +1,12 @@
+mode: count
+github.com/lee212400/myProject/lint-test/lint.go:8.23,9.13 1 3
+github.com/lee212400/myProject/lint-test/lint.go:9.13,11.3 1 2
+github.com/lee212400/myProject/lint-test/lint.go:12.2,12.13 1 3
+github.com/lee212400/myProject/lint-test/lint.go:12.13,14.3 1 1
+github.com/lee212400/myProject/lint-test/lint.go:18.30,19.21 1 3
+github.com/lee212400/myProject/lint-test/lint.go:19.21,21.3 1 1
+github.com/lee212400/myProject/lint-test/lint.go:22.2,22.10 1 2
+github.com/lee212400/myProject/lint-test/lint.go:25.26,27.2 1 0
+github.com/lee212400/myProject/lint-test/lint.go:29.17,33.2 3 0
+github.com/lee212400/myProject/lint-test/lint.go:35.14,37.26 2 0
+github.com/lee212400/myProject/lint-test/lint.go:37.26,39.3 1 0
