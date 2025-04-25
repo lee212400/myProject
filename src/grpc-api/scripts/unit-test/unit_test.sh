@@ -7,14 +7,14 @@ COVERAGE_FILE=coverage.out
 TIMEOUT=10m
 
 TARGET_DIRS=(
-    $ROOT_DIR/lint-test
+    $ROOT_DIR/interface/controller
 )
 
 
 TEST_DIR="${TARGET_DIRS[@]}"
 
 echo "Running go test with timeout=$TIMEOUT and coverage output to $COVERAGE_FILE"
-go test -timeout=$TIMEOUT -covermode=atomic -coverprofile=$COVERAGE_FILE $TEST_DIR -v
+go test -timeout=$TIMEOUT -covermode=atomic -coverprofile=$COVERAGE_FILE $TEST_DIR
 
 if [ -f $COVERAGE_FILE ]; then
     echo "coverage report:$covered_functions/$total_functions"
@@ -23,8 +23,6 @@ if [ -f $COVERAGE_FILE ]; then
 
     total_coverage=$(go tool cover -func=$COVERAGE_FILE | grep total | awk '{print $3}')
     echo "total coverage: $total_coverage"
-
-    gocov convert $COVERAGE_FILE | gocov report
 
 fi
 

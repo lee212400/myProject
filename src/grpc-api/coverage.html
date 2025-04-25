@@ -3,7 +3,7 @@
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-		<title>lint-test: Go Coverage Report</title>
+		<title>Go Coverage Report</title>
 		<style>
 			body {
 				background: black;
@@ -55,8 +55,6 @@
 			<div id="nav">
 				<select id="files">
 				
-				<option value="file0">github.com/lee212400/myProject/lint-test/lint.go (50.0%)</option>
-				
 				</select>
 			</div>
 			<div id="legend">
@@ -77,48 +75,6 @@
 			</div>
 		</div>
 		<div id="content">
-		
-		<pre class="file" id="file0" style="display: none">package linttest
-
-import (
-        "fmt"
-        "time"
-)
-
-func GoCyclo(age int) <span class="cov10" title="3">{
-        if age &gt; 1 </span><span class="cov6" title="2">{
-                fmt.Println("GoCyclo test")
-        }</span>
-        <span class="cov10" title="3">if age &gt; 2 </span><span class="cov1" title="1">{
-                fmt.Println("GoCyclo test")
-        }</span>
-
-}
-
-func Unparam(key string) int <span class="cov10" title="3">{
-        if key == "myTest" </span><span class="cov1" title="1">{
-                return 1
-        }</span>
-        <span class="cov6" title="2">return 0</span>
-}
-
-func Arguments(a, b int) <span class="cov0" title="0">{
-        fmt.Println("Arguments:", a, b)
-}</span>
-
-func Gosimple() <span class="cov0" title="0">{
-        start := time.Now()
-        time.Sleep(10 * time.Millisecond)
-        fmt.Println("Elapsed:", time.Since(start))
-}</span>
-
-func Gosec() <span class="cov0" title="0">{
-        myP := "password123"
-        if myP == "password123" </span><span class="cov0" title="0">{
-                fmt.Println("Login successful!")
-        }</span>
-}
-</pre>
 		
 		</div>
 	</body>
