@@ -14,7 +14,7 @@ TARGET_DIRS=(
 TEST_DIR="${TARGET_DIRS[@]}"
 
 echo "Running go test with timeout=$TIMEOUT and coverage output to $COVERAGE_FILE"
-go test -timeout=$TIMEOUT -covermode=count -coverprofile=$COVERAGE_FILE $TEST_DIR
+go test -timeout=$TIMEOUT -covermode=atomic -coverprofile=$COVERAGE_FILE $TEST_DIR -v
 
 if [ -f $COVERAGE_FILE ]; then
     echo "coverage report:$covered_functions/$total_functions"
@@ -23,6 +23,8 @@ if [ -f $COVERAGE_FILE ]; then
 
     total_coverage=$(go tool cover -func=$COVERAGE_FILE | grep total | awk '{print $3}')
     echo "total coverage: $total_coverage"
+
+    gocov convert $COVERAGE_FILE | gocov report
 
 fi
 
