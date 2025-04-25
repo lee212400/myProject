@@ -7,9 +7,10 @@ import (
 	"net/http"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
-	pb "github.com/lee212400/myProject/rpc/proto"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+
+	pb "github.com/lee212400/myProject/rpc/proto"
 )
 
 func main() {

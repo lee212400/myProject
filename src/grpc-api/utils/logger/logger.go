@@ -1,9 +1,10 @@
 package logger
 
 import (
-	"github.com/lee212400/myProject/domain/entity"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+
+	"github.com/lee212400/myProject/domain/entity"
 )
 
 var log *zap.SugaredLogger

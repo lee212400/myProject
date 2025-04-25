@@ -5,6 +5,7 @@ package register
 
 import (
 	"github.com/google/wire"
+
 	"github.com/lee212400/myProject/infrastructure/db"
 	"github.com/lee212400/myProject/infrastructure/repository"
 	"github.com/lee212400/myProject/interface/controller"
