@@ -17,6 +17,14 @@ echo "Running go test with timeout=$TIMEOUT and coverage output to $COVERAGE_FIL
 go test -timeout=$TIMEOUT -covermode=count -coverprofile=$COVERAGE_FILE $TEST_DIR
 
 if [ -f $COVERAGE_FILE ]; then
-    echo "Generating HTML coverage report..."
-    go tool cover -html=$COVERAGE_FILE -o coverage.html
+    echo "coverage report:$covered_functions/$total_functions"
+    go tool cover -func=$COVERAGE_FILE | grep -v "no coverage"
+
+
+    total_coverage=$(go tool cover -func=$COVERAGE_FILE | grep total | awk '{print $3}')
+    echo "total coverage: $total_coverage"
+
 fi
+
+echo "Generating HTML report..."
+go tool cover -html=$COVERAGE_FILE -o coverage.html
