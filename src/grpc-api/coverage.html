@@ -3,7 +3,7 @@
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-		<title>controller: Go Coverage Report</title>
+		<title>repository: Go Coverage Report</title>
 		<style>
 			body {
 				background: black;
@@ -55,11 +55,15 @@
 			<div id="nav">
 				<select id="files">
 				
-				<option value="file0">github.com/lee212400/myProject/interface/controller/user.go (100.0%)</option>
+				<option value="file0">github.com/lee212400/myProject/infrastructure/repository/postProcess.go (0.0%)</option>
 				
-				<option value="file1">github.com/lee212400/myProject/interface/presenter/user.go (100.0%)</option>
+				<option value="file1">github.com/lee212400/myProject/infrastructure/repository/user.go (100.0%)</option>
 				
-				<option value="file2">github.com/lee212400/myProject/usecase/user_interactor.go (100.0%)</option>
+				<option value="file2">github.com/lee212400/myProject/interface/controller/user.go (100.0%)</option>
+				
+				<option value="file3">github.com/lee212400/myProject/interface/presenter/user.go (100.0%)</option>
+				
+				<option value="file4">github.com/lee212400/myProject/usecase/user_interactor.go (100.0%)</option>
 				
 				</select>
 			</div>
@@ -82,7 +86,134 @@
 		</div>
 		<div id="content">
 		
-		<pre class="file" id="file0" style="display: none">package controller
+		<pre class="file" id="file0" style="display: none">package repository
+
+import (
+        "fmt"
+
+        "github.com/lee212400/myProject/domain/entity"
+        "github.com/lee212400/myProject/infrastructure/db"
+)
+
+type PostProcessRepositoryImpl struct{}
+
+func NewPostProcessRepositoryImpl() *PostProcessRepositoryImpl <span class="cov0" title="0">{
+        return &amp;PostProcessRepositoryImpl{}
+}</span>
+
+func (i *PostProcessRepositoryImpl) PostProcess(ctx *entity.Context, err *error) <span class="cov0" title="0">{
+        defer func() </span><span class="cov0" title="0">{
+                if r := recover(); r != nil </span><span class="cov0" title="0">{
+                        fmt.Println("Recovered from panic:", r)
+                }</span>
+        }()
+
+        <span class="cov0" title="0">db.CloseDb(ctx, *err == nil)</span>
+}
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">package repository
+
+import (
+        "database/sql"
+        "fmt"
+        "math/rand"
+        "time"
+
+        "github.com/lee212400/myProject/domain/entity"
+        "github.com/lee212400/myProject/infrastructure/db"
+        ue "github.com/lee212400/myProject/utils/errors"
+)
+
+const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+
+type UserRepositoryImpl struct {
+        db db.Db
+}
+
+func NewUserRepositoryImpl(db db.Db) *UserRepositoryImpl <span class="cov7" title="13">{
+        return &amp;UserRepositoryImpl{db: db}
+}</span>
+
+func (i *UserRepositoryImpl) GetUser(ctx *entity.Context, userId string) (*entity.User, error) <span class="cov4" title="4">{
+        fmt.Println("Repository GetUser")
+        db, err := i.db.GetDbClient(ctx)
+        if err != nil </span><span class="cov1" title="1">{
+                return &amp;entity.User{}, ue.WithError(ctx, ue.Internal, err)
+        }</span>
+
+        <span class="cov3" title="3">query := "select user_id,first_name,last_name,email,age from users where user_id = ?"
+
+        r := db.QueryRowContext(ctx, query, userId)
+        var user entity.User
+        err = r.Scan(&amp;user.UserId, &amp;user.FirstName, &amp;user.LastName, &amp;user.Email, &amp;user.Age)
+        if err != nil </span><span class="cov2" title="2">{
+                if err == sql.ErrNoRows </span><span class="cov1" title="1">{
+                        return &amp;entity.User{}, ue.New(ctx, ue.NotFound, "No found user")
+                }</span>
+                <span class="cov1" title="1">return &amp;entity.User{}, ue.WithError(ctx, ue.Internal, err)</span>
+        }
+
+        <span class="cov1" title="1">return &amp;user, nil</span>
+}
+func (i *UserRepositoryImpl) CreateUser(ctx *entity.Context, firstName string, lastName string, email string, age int32) (string, error) <span class="cov3" title="3">{
+        db, err := i.db.GetDbClient(ctx)
+        if err != nil </span><span class="cov1" title="1">{
+                return "", ue.WithError(ctx, ue.Internal, err)
+        }</span>
+
+        <span class="cov2" title="2">query := "INSERT INTO users (user_id, first_name, last_name, email, age) VALUES (?, ?, ?, ?, ?)"
+
+        userId := generateRandomString(20)
+
+        _, err = db.ExecContext(ctx, query, userId, firstName, lastName, email, age)
+        if err != nil </span><span class="cov1" title="1">{
+                return "", ue.WithError(ctx, ue.Internal, err)
+        }</span>
+
+        <span class="cov1" title="1">return userId, nil</span>
+}
+func (i *UserRepositoryImpl) UpdateUser(ctx *entity.Context, userId string, age int32) error <span class="cov3" title="3">{
+        db, err := i.db.GetDbClient(ctx)
+        if err != nil </span><span class="cov1" title="1">{
+                return ue.WithError(ctx, ue.Internal, err)
+        }</span>
+
+        <span class="cov2" title="2">query := "update users set age = ? where user_id = ?"
+
+        _, err = db.Exec(query, age, userId)
+        if err != nil </span><span class="cov1" title="1">{
+                return ue.WithError(ctx, ue.Internal, err)
+        }</span>
+        <span class="cov1" title="1">return nil</span>
+}
+func (i *UserRepositoryImpl) DeleteUser(ctx *entity.Context, userId string) error <span class="cov3" title="3">{
+        db, err := i.db.GetDbClient(ctx)
+        if err != nil </span><span class="cov1" title="1">{
+                return err
+        }</span>
+
+        <span class="cov2" title="2">query := `delete from users where user_id = ?`
+
+        _, err = db.Exec(query, userId)
+        if err != nil </span><span class="cov1" title="1">{
+                return ue.WithError(ctx, ue.Internal, err)
+        }</span>
+        <span class="cov1" title="1">return nil</span>
+}
+
+func generateRandomString(length int) string <span class="cov2" title="2">{
+        r := rand.New(rand.NewSource(time.Now().UnixNano()))
+
+        result := make([]byte, length)
+        for i := range result </span><span class="cov10" title="40">{
+                result[i] = charset[r.Intn(len(charset))]
+        }</span>
+        <span class="cov2" title="2">return string(result)</span>
+}
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">package controller
 
 import (
         "github.com/lee212400/myProject/domain/entity"
@@ -154,7 +285,7 @@ func (i *UserController) DeleteUser(ctx *entity.Context, in *pb.DeleteUserReques
 }
 </pre>
 		
-		<pre class="file" id="file1" style="display: none">package presenter
+		<pre class="file" id="file3" style="display: none">package presenter
 
 import (
         "github.com/lee212400/myProject/domain/entity"
@@ -211,7 +342,7 @@ func (i *UserPresenter) DeleteUser(ctx *entity.Context, out *dto.DeleteUserOutpu
 }</span>
 </pre>
 		
-		<pre class="file" id="file2" style="display: none">package usecase
+		<pre class="file" id="file4" style="display: none">package usecase
 
 import (
         "log"
