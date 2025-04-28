@@ -9,6 +9,7 @@ import (
 	mu "github.com/lee212400/myProject/mock/usecase"
 	pb "github.com/lee212400/myProject/rpc/proto"
 	"github.com/lee212400/myProject/usecase/dto"
+	"github.com/lee212400/myProject/utils"
 	uc "github.com/lee212400/myProject/utils/context"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
@@ -75,8 +76,8 @@ func TestUserController_GetUser(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			inputPort.EXPECT().GetUser(gomock.Any(), gomock.Any()).Do(func(ctx *entity.Context, in *dto.GetUserInputDto) {
 				require.Equal(t, tt.args.in.UserId, in.UserId)
-			}).Return(IfElse(tt.wantErr == true, fmt.Errorf("dummy error"), nil)).
-				Times(IfElse(tt.callExpect == callValidate, 0, 1))
+			}).Return(utils.IfElse(tt.wantErr == true, fmt.Errorf("dummy error"), nil)).
+				Times(utils.IfElse(tt.callExpect == callValidate, 0, 1))
 
 			if err := mockCtrl.GetUser(tt.args.ctx, tt.args.in); (err != nil) != tt.wantErr {
 				t.Errorf("UserController.GetUser() error = %v, wantErr %v", err, tt.wantErr)
@@ -156,8 +157,8 @@ func TestUserController_CreateUser(t *testing.T) {
 				require.Equal(t, tt.args.in.User.FirstName, in.User.FirstName)
 				require.Equal(t, tt.args.in.User.LastName, in.User.LastName)
 				require.Equal(t, tt.args.in.User.Age, in.User.Age)
-			}).Return(IfElse(tt.wantErr == true, fmt.Errorf("dummy error"), nil)).
-				Times(IfElse(tt.callExpect == callValidate, 0, 1))
+			}).Return(utils.IfElse(tt.wantErr == true, fmt.Errorf("dummy error"), nil)).
+				Times(utils.IfElse(tt.callExpect == callValidate, 0, 1))
 
 			if err := mockCtrl.CreateUser(tt.args.ctx, tt.args.in); (err != nil) != tt.wantErr {
 				t.Errorf("UserController.CreateUser() error = %v, wantErr %v", err, tt.wantErr)
@@ -231,8 +232,8 @@ func TestUserController_UpdateUser(t *testing.T) {
 			inputPort.EXPECT().UpdateUser(gomock.Any(), gomock.Any()).Do(func(ctx *entity.Context, in *dto.UpdateUserInputDto) {
 				require.Equal(t, tt.args.in.UserId, in.UserId)
 				require.Equal(t, tt.args.in.Age, in.Age)
-			}).Return(IfElse(tt.wantErr == true, fmt.Errorf("dummy error"), nil)).
-				Times(IfElse(tt.callExpect == callValidate, 0, 1))
+			}).Return(utils.IfElse(tt.wantErr == true, fmt.Errorf("dummy error"), nil)).
+				Times(utils.IfElse(tt.callExpect == callValidate, 0, 1))
 
 			if err := mockCtrl.UpdateUser(tt.args.ctx, tt.args.in); (err != nil) != tt.wantErr {
 				t.Errorf("UserController.UpdateUser() error = %v, wantErr %v", err, tt.wantErr)
@@ -293,8 +294,8 @@ func TestUserController_DeleteUser(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			inputPort.EXPECT().DeleteUser(gomock.Any(), gomock.Any()).Do(func(ctx *entity.Context, in *dto.DeleteUserInputDto) {
 				require.Equal(t, tt.args.in.UserId, in.UserId)
-			}).Return(IfElse(tt.wantErr == true, fmt.Errorf("dummy error"), nil)).
-				Times(IfElse(tt.callExpect == callValidate, 0, 1))
+			}).Return(utils.IfElse(tt.wantErr == true, fmt.Errorf("dummy error"), nil)).
+				Times(utils.IfElse(tt.callExpect == callValidate, 0, 1))
 
 			if err := mockCtrl.DeleteUser(tt.args.ctx, tt.args.in); (err != nil) != tt.wantErr {
 				t.Errorf("UserController.DeleteUser() error = %v, wantErr %v", err, tt.wantErr)
