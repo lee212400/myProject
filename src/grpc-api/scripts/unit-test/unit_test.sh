@@ -8,6 +8,7 @@ TIMEOUT=10m
 
 TARGET_DIRS=(
     $ROOT_DIR/interface/controller
+    $ROOT_DIR/interface/presenter
 )
 
 

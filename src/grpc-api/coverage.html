@@ -3,7 +3,7 @@
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-		<title>Go Coverage Report</title>
+		<title>controller: Go Coverage Report</title>
 		<style>
 			body {
 				background: black;
@@ -55,6 +55,10 @@
 			<div id="nav">
 				<select id="files">
 				
+				<option value="file0">github.com/lee212400/myProject/interface/controller/user.go (100.0%)</option>
+				
+				<option value="file1">github.com/lee212400/myProject/interface/presenter/user.go (100.0%)</option>
+				
 				</select>
 			</div>
 			<div id="legend">
@@ -75,6 +79,135 @@
 			</div>
 		</div>
 		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">package controller
+
+import (
+        "github.com/lee212400/myProject/domain/entity"
+        "github.com/lee212400/myProject/usecase"
+        "github.com/lee212400/myProject/usecase/dto"
+
+        pb "github.com/lee212400/myProject/rpc/proto"
+        ue "github.com/lee212400/myProject/utils/errors"
+        log "github.com/lee212400/myProject/utils/logger"
+        validate "github.com/lee212400/myProject/utils/validate"
+)
+
+type UserController struct {
+        inputPort usecase.UserInputPort
+}
+
+func NewUserController(inputPort usecase.UserInputPort) *UserController <span class="cov10" title="4">{
+        return &amp;UserController{
+                inputPort: inputPort,
+        }
+}</span>
+
+func (i *UserController) GetUser(ctx *entity.Context, in *pb.GetUserRequest) error <span class="cov8" title="3">{
+        log.WithContext(ctx).Debug("start GetUser")
+        if err := validate.Validate.Validate(in); err != nil </span><span class="cov1" title="1">{
+                return ue.WithError(ctx, ue.InvalidArgument, err)
+        }</span>
+
+        <span class="cov5" title="2">dto := &amp;dto.GetUserInputDto{
+                UserId: in.UserId,
+        }
+        return i.inputPort.GetUser(ctx, dto)</span>
+}
+func (i *UserController) CreateUser(ctx *entity.Context, in *pb.CreateUserRequest) error <span class="cov8" title="3">{
+        if err := validate.Validate.Validate(in); err != nil </span><span class="cov1" title="1">{
+                return ue.New(ctx, ue.InvalidArgument, "Invaild request data")
+        }</span>
+
+        <span class="cov5" title="2">dto := &amp;dto.CreateUserInputDto{
+                User: &amp;entity.User{
+                        FirstName: in.User.FirstName,
+                        LastName:  in.User.LastName,
+                        Email:     in.User.Email,
+                        Age:       in.User.Age,
+                },
+        }
+        return i.inputPort.CreateUser(ctx, dto)</span>
+}
+func (i *UserController) UpdateUser(ctx *entity.Context, in *pb.UpdateUserRequest) error <span class="cov10" title="4">{
+        if err := validate.Validate.Validate(in); err != nil </span><span class="cov5" title="2">{
+                return ue.New(ctx, ue.InvalidArgument, "Invaild request data")
+        }</span>
+
+        <span class="cov5" title="2">dto := &amp;dto.UpdateUserInputDto{
+                UserId: in.UserId,
+                Age:    in.Age,
+        }
+        return i.inputPort.UpdateUser(ctx, dto)</span>
+}
+func (i *UserController) DeleteUser(ctx *entity.Context, in *pb.DeleteUserRequest) error <span class="cov8" title="3">{
+        if err := validate.Validate.Validate(in); err != nil </span><span class="cov1" title="1">{
+                return ue.New(ctx, ue.InvalidArgument, "Invaild request data")
+        }</span>
+
+        <span class="cov5" title="2">dto := &amp;dto.DeleteUserInputDto{
+                UserId: in.UserId,
+        }
+        return i.inputPort.DeleteUser(ctx, dto)</span>
+}
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">package presenter
+
+import (
+        "github.com/lee212400/myProject/domain/entity"
+        pb "github.com/lee212400/myProject/rpc/proto"
+        "github.com/lee212400/myProject/usecase/dto"
+)
+
+type UserPresenter struct {
+}
+
+func NewUserPresenter() *UserPresenter <span class="cov10" title="4">{
+        return &amp;UserPresenter{}
+}</span>
+
+func (i *UserPresenter) GetUser(ctx *entity.Context, out *dto.GetUserOutputDto) error <span class="cov1" title="1">{
+        ctx.Response = &amp;pb.GetUserResponse{
+                User: &amp;pb.User{
+                        UserId:    out.User.UserId,
+                        Email:     out.User.Email,
+                        FirstName: out.User.FirstName,
+                        LastName:  out.User.LastName,
+                        Age:       out.User.Age,
+                },
+        }
+        return nil
+}</span>
+func (i *UserPresenter) CreateUser(ctx *entity.Context, out *dto.CreateUserOutputDto) error <span class="cov1" title="1">{
+        ctx.Response = &amp;pb.CreateUserResponse{
+                User: &amp;pb.User{
+                        UserId:    out.User.UserId,
+                        Email:     out.User.Email,
+                        FirstName: out.User.FirstName,
+                        LastName:  out.User.LastName,
+                        Age:       out.User.Age,
+                },
+        }
+        return nil
+}</span>
+func (i *UserPresenter) UpdateUser(ctx *entity.Context, out *dto.UpdateUserOutputDto) error <span class="cov1" title="1">{
+        ctx.Response = &amp;pb.UpdateUserResponse{
+                User: &amp;pb.User{
+                        UserId:    out.User.UserId,
+                        Email:     out.User.Email,
+                        FirstName: out.User.FirstName,
+                        LastName:  out.User.LastName,
+                        Age:       out.User.Age,
+                },
+        }
+        return nil
+}</span>
+func (i *UserPresenter) DeleteUser(ctx *entity.Context, out *dto.DeleteUserOutputDto) error <span class="cov1" title="1">{
+        ctx.Response = &amp;pb.DeleteUserResponse{}
+        return nil
+}</span>
+</pre>
 		
 		</div>
 	</body>

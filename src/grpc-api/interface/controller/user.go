@@ -23,9 +23,9 @@ func NewUserController(inputPort usecase.UserInputPort) *UserController {
 
 func (i *UserController) GetUser(ctx *entity.Context, in *pb.GetUserRequest) error {
 	log.WithContext(ctx).Debug("start GetUser")
-	// if err := validate.Validate.Validate(in); err != nil {
-	// 	return ue.WithError(ctx, ue.InvalidArgument, err)
-	// }
+	if err := validate.Validate.Validate(in); err != nil {
+		return ue.WithError(ctx, ue.InvalidArgument, err)
+	}
 
 	dto := &dto.GetUserInputDto{
 		UserId: in.UserId,
