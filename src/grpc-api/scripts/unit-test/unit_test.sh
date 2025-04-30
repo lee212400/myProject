@@ -11,6 +11,7 @@ TARGET_DIRS=(
     $ROOT_DIR/interface/presenter
     $ROOT_DIR/usecase
     $ROOT_DIR/infrastructure/repository
+    $ROOT_DIR/infrastructure/saas
 )
 
 

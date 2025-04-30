@@ -3,7 +3,7 @@
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-		<title>repository: Go Coverage Report</title>
+		<title>saas: Go Coverage Report</title>
 		<style>
 			body {
 				background: black;
@@ -55,15 +55,7 @@
 			<div id="nav">
 				<select id="files">
 				
-				<option value="file0">github.com/lee212400/myProject/infrastructure/repository/postProcess.go (0.0%)</option>
-				
-				<option value="file1">github.com/lee212400/myProject/infrastructure/repository/user.go (100.0%)</option>
-				
-				<option value="file2">github.com/lee212400/myProject/interface/controller/user.go (100.0%)</option>
-				
-				<option value="file3">github.com/lee212400/myProject/interface/presenter/user.go (100.0%)</option>
-				
-				<option value="file4">github.com/lee212400/myProject/usecase/user_interactor.go (100.0%)</option>
+				<option value="file0">github.com/lee212400/myProject/infrastructure/saas/saas.go (75.0%)</option>
 				
 				</select>
 			</div>
@@ -86,349 +78,81 @@
 		</div>
 		<div id="content">
 		
-		<pre class="file" id="file0" style="display: none">package repository
+		<pre class="file" id="file0" style="display: none">package saas
 
 import (
+        "encoding/json"
         "fmt"
-
-        "github.com/lee212400/myProject/domain/entity"
-        "github.com/lee212400/myProject/infrastructure/db"
-)
-
-type PostProcessRepositoryImpl struct{}
-
-func NewPostProcessRepositoryImpl() *PostProcessRepositoryImpl <span class="cov0" title="0">{
-        return &amp;PostProcessRepositoryImpl{}
-}</span>
-
-func (i *PostProcessRepositoryImpl) PostProcess(ctx *entity.Context, err *error) <span class="cov0" title="0">{
-        defer func() </span><span class="cov0" title="0">{
-                if r := recover(); r != nil </span><span class="cov0" title="0">{
-                        fmt.Println("Recovered from panic:", r)
-                }</span>
-        }()
-
-        <span class="cov0" title="0">db.CloseDb(ctx, *err == nil)</span>
-}
-</pre>
-		
-		<pre class="file" id="file1" style="display: none">package repository
-
-import (
-        "database/sql"
-        "fmt"
-        "math/rand"
+        "io"
+        "net"
+        "net/http"
         "time"
-
-        "github.com/lee212400/myProject/domain/entity"
-        "github.com/lee212400/myProject/infrastructure/db"
-        ue "github.com/lee212400/myProject/utils/errors"
 )
 
-const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+var client *http.Client
 
-type UserRepositoryImpl struct {
-        db db.Db
+type User struct {
+        Name string `json:"name"`
+        Age  int    `json:"age"`
 }
 
-func NewUserRepositoryImpl(db db.Db) *UserRepositoryImpl <span class="cov7" title="13">{
-        return &amp;UserRepositoryImpl{db: db}
-}</span>
-
-func (i *UserRepositoryImpl) GetUser(ctx *entity.Context, userId string) (*entity.User, error) <span class="cov4" title="4">{
-        fmt.Println("Repository GetUser")
-        db, err := i.db.GetDbClient(ctx)
-        if err != nil </span><span class="cov1" title="1">{
-                return &amp;entity.User{}, ue.WithError(ctx, ue.Internal, err)
+func getClient() *http.Client <span class="cov10" title="2">{
+        if client == nil </span><span class="cov0" title="0">{
+                client = &amp;http.Client{
+                        Timeout:   10 * time.Second,
+                        Transport: getTransport(),
+                }
         }</span>
 
-        <span class="cov3" title="3">query := "select user_id,first_name,last_name,email,age from users where user_id = ?"
-
-        r := db.QueryRowContext(ctx, query, userId)
-        var user entity.User
-        err = r.Scan(&amp;user.UserId, &amp;user.FirstName, &amp;user.LastName, &amp;user.Email, &amp;user.Age)
-        if err != nil </span><span class="cov2" title="2">{
-                if err == sql.ErrNoRows </span><span class="cov1" title="1">{
-                        return &amp;entity.User{}, ue.New(ctx, ue.NotFound, "No found user")
-                }</span>
-                <span class="cov1" title="1">return &amp;entity.User{}, ue.WithError(ctx, ue.Internal, err)</span>
-        }
-
-        <span class="cov1" title="1">return &amp;user, nil</span>
-}
-func (i *UserRepositoryImpl) CreateUser(ctx *entity.Context, firstName string, lastName string, email string, age int32) (string, error) <span class="cov3" title="3">{
-        db, err := i.db.GetDbClient(ctx)
-        if err != nil </span><span class="cov1" title="1">{
-                return "", ue.WithError(ctx, ue.Internal, err)
-        }</span>
-
-        <span class="cov2" title="2">query := "INSERT INTO users (user_id, first_name, last_name, email, age) VALUES (?, ?, ?, ?, ?)"
-
-        userId := generateRandomString(20)
-
-        _, err = db.ExecContext(ctx, query, userId, firstName, lastName, email, age)
-        if err != nil </span><span class="cov1" title="1">{
-                return "", ue.WithError(ctx, ue.Internal, err)
-        }</span>
-
-        <span class="cov1" title="1">return userId, nil</span>
-}
-func (i *UserRepositoryImpl) UpdateUser(ctx *entity.Context, userId string, age int32) error <span class="cov3" title="3">{
-        db, err := i.db.GetDbClient(ctx)
-        if err != nil </span><span class="cov1" title="1">{
-                return ue.WithError(ctx, ue.Internal, err)
-        }</span>
-
-        <span class="cov2" title="2">query := "update users set age = ? where user_id = ?"
-
-        _, err = db.Exec(query, age, userId)
-        if err != nil </span><span class="cov1" title="1">{
-                return ue.WithError(ctx, ue.Internal, err)
-        }</span>
-        <span class="cov1" title="1">return nil</span>
-}
-func (i *UserRepositoryImpl) DeleteUser(ctx *entity.Context, userId string) error <span class="cov3" title="3">{
-        db, err := i.db.GetDbClient(ctx)
-        if err != nil </span><span class="cov1" title="1">{
-                return err
-        }</span>
-
-        <span class="cov2" title="2">query := `delete from users where user_id = ?`
-
-        _, err = db.Exec(query, userId)
-        if err != nil </span><span class="cov1" title="1">{
-                return ue.WithError(ctx, ue.Internal, err)
-        }</span>
-        <span class="cov1" title="1">return nil</span>
+        <span class="cov10" title="2">return client</span>
 }
 
-func generateRandomString(length int) string <span class="cov2" title="2">{
-        r := rand.New(rand.NewSource(time.Now().UnixNano()))
-
-        result := make([]byte, length)
-        for i := range result </span><span class="cov10" title="40">{
-                result[i] = charset[r.Intn(len(charset))]
-        }</span>
-        <span class="cov2" title="2">return string(result)</span>
-}
-</pre>
-		
-		<pre class="file" id="file2" style="display: none">package controller
-
-import (
-        "github.com/lee212400/myProject/domain/entity"
-        "github.com/lee212400/myProject/usecase"
-        "github.com/lee212400/myProject/usecase/dto"
-
-        pb "github.com/lee212400/myProject/rpc/proto"
-        ue "github.com/lee212400/myProject/utils/errors"
-        log "github.com/lee212400/myProject/utils/logger"
-        validate "github.com/lee212400/myProject/utils/validate"
-)
-
-type UserController struct {
-        inputPort usecase.UserInputPort
-}
-
-func NewUserController(inputPort usecase.UserInputPort) *UserController <span class="cov10" title="4">{
-        return &amp;UserController{
-                inputPort: inputPort,
+func getTransport() http.RoundTripper <span class="cov0" title="0">{
+        return &amp;http.Transport{
+                TLSHandshakeTimeout: 5 * time.Second,
+                DialContext: (&amp;net.Dialer{
+                        Timeout:   5 * time.Second,
+                        KeepAlive: 30 * time.Second,
+                }).DialContext,
+                IdleConnTimeout:       90 * time.Second,
+                MaxIdleConns:          100,
+                ExpectContinueTimeout: 1 * time.Second,
         }
 }</span>
 
-func (i *UserController) GetUser(ctx *entity.Context, in *pb.GetUserRequest) error <span class="cov8" title="3">{
-        log.WithContext(ctx).Debug("start GetUser")
-        if err := validate.Validate.Validate(in); err != nil </span><span class="cov1" title="1">{
-                return ue.WithError(ctx, ue.InvalidArgument, err)
+func GetUser(id string) (string, int, error) <span class="cov10" title="2">{
+
+        uri := "https://sample/users/" + id
+
+        req, err := http.NewRequest("GET", uri, nil)
+        if err != nil </span><span class="cov0" title="0">{
+                return "", 0, err
         }</span>
 
-        <span class="cov5" title="2">dto := &amp;dto.GetUserInputDto{
-                UserId: in.UserId,
-        }
-        return i.inputPort.GetUser(ctx, dto)</span>
-}
-func (i *UserController) CreateUser(ctx *entity.Context, in *pb.CreateUserRequest) error <span class="cov8" title="3">{
-        if err := validate.Validate.Validate(in); err != nil </span><span class="cov1" title="1">{
-                return ue.New(ctx, ue.InvalidArgument, "Invaild request data")
-        }</span>
+        <span class="cov10" title="2">req.Header.Set("Content-Type", "application/json")
+        req.Header.Set("Accept", "application/json")
 
-        <span class="cov5" title="2">dto := &amp;dto.CreateUserInputDto{
-                User: &amp;entity.User{
-                        FirstName: in.User.FirstName,
-                        LastName:  in.User.LastName,
-                        Email:     in.User.Email,
-                        Age:       in.User.Age,
-                },
-        }
-        return i.inputPort.CreateUser(ctx, dto)</span>
-}
-func (i *UserController) UpdateUser(ctx *entity.Context, in *pb.UpdateUserRequest) error <span class="cov10" title="4">{
-        if err := validate.Validate.Validate(in); err != nil </span><span class="cov5" title="2">{
-                return ue.New(ctx, ue.InvalidArgument, "Invaild request data")
-        }</span>
-
-        <span class="cov5" title="2">dto := &amp;dto.UpdateUserInputDto{
-                UserId: in.UserId,
-                Age:    in.Age,
-        }
-        return i.inputPort.UpdateUser(ctx, dto)</span>
-}
-func (i *UserController) DeleteUser(ctx *entity.Context, in *pb.DeleteUserRequest) error <span class="cov8" title="3">{
-        if err := validate.Validate.Validate(in); err != nil </span><span class="cov1" title="1">{
-                return ue.New(ctx, ue.InvalidArgument, "Invaild request data")
-        }</span>
-
-        <span class="cov5" title="2">dto := &amp;dto.DeleteUserInputDto{
-                UserId: in.UserId,
-        }
-        return i.inputPort.DeleteUser(ctx, dto)</span>
-}
-</pre>
-		
-		<pre class="file" id="file3" style="display: none">package presenter
-
-import (
-        "github.com/lee212400/myProject/domain/entity"
-        pb "github.com/lee212400/myProject/rpc/proto"
-        "github.com/lee212400/myProject/usecase/dto"
-)
-
-type UserPresenter struct {
-}
-
-func NewUserPresenter() *UserPresenter <span class="cov10" title="4">{
-        return &amp;UserPresenter{}
-}</span>
-
-func (i *UserPresenter) GetUser(ctx *entity.Context, out *dto.GetUserOutputDto) error <span class="cov1" title="1">{
-        ctx.Response = &amp;pb.GetUserResponse{
-                User: &amp;pb.User{
-                        UserId:    out.User.UserId,
-                        Email:     out.User.Email,
-                        FirstName: out.User.FirstName,
-                        LastName:  out.User.LastName,
-                        Age:       out.User.Age,
-                },
-        }
-        return nil
-}</span>
-func (i *UserPresenter) CreateUser(ctx *entity.Context, out *dto.CreateUserOutputDto) error <span class="cov1" title="1">{
-        ctx.Response = &amp;pb.CreateUserResponse{
-                User: &amp;pb.User{
-                        UserId:    out.User.UserId,
-                        Email:     out.User.Email,
-                        FirstName: out.User.FirstName,
-                        LastName:  out.User.LastName,
-                        Age:       out.User.Age,
-                },
-        }
-        return nil
-}</span>
-func (i *UserPresenter) UpdateUser(ctx *entity.Context, out *dto.UpdateUserOutputDto) error <span class="cov1" title="1">{
-        ctx.Response = &amp;pb.UpdateUserResponse{
-                User: &amp;pb.User{
-                        UserId:    out.User.UserId,
-                        Email:     out.User.Email,
-                        FirstName: out.User.FirstName,
-                        LastName:  out.User.LastName,
-                        Age:       out.User.Age,
-                },
-        }
-        return nil
-}</span>
-func (i *UserPresenter) DeleteUser(ctx *entity.Context, out *dto.DeleteUserOutputDto) error <span class="cov1" title="1">{
-        ctx.Response = &amp;pb.DeleteUserResponse{}
-        return nil
-}</span>
-</pre>
-		
-		<pre class="file" id="file4" style="display: none">package usecase
-
-import (
-        "log"
-
-        "github.com/lee212400/myProject/domain/entity"
-        "github.com/lee212400/myProject/usecase/dto"
-        "github.com/lee212400/myProject/usecase/repository"
-)
-
-type UserInteractor struct {
-        postProcessRepository repository.PostProcessRepository
-        userRepository        repository.UserRepository
-        outputPort            UserOutputPort
-}
-
-func NewUserInteractor(postProcessRepository repository.PostProcessRepository, userRepository repository.UserRepository, outputPort UserOutputPort) *UserInteractor <span class="cov10" title="14">{
-        return &amp;UserInteractor{
-                postProcessRepository: postProcessRepository,
-                userRepository:        userRepository,
-                outputPort:            outputPort,
-        }
-}</span>
-
-func (i *UserInteractor) GetUser(ctx *entity.Context, in *dto.GetUserInputDto) (err error) <span class="cov4" title="3">{
-        log.Println("Interactor GetUser")
-        defer i.postProcessRepository.PostProcess(ctx, &amp;err)
-        u, err := i.userRepository.GetUser(ctx, in.UserId)
+        resp, err := getClient().Do(req)
         if err != nil </span><span class="cov1" title="1">{
-                return
+                return "", 0, err
+        }</span> else<span class="cov1" title="1"> if resp.StatusCode != http.StatusOK </span><span class="cov0" title="0">{
+                return "", 0, fmt.Errorf("error status code:%d", resp.StatusCode)
+        }</span>
+        <span class="cov1" title="1">defer resp.Body.Close()
+
+        bodyBytes, err := io.ReadAll(resp.Body)
+        if err != nil </span><span class="cov0" title="0">{
+                return "", 0, err
+        }</span>
+        <span class="cov1" title="1">fmt.Println(string(bodyBytes))
+
+        dt := &amp;User{}
+
+        if err := json.Unmarshal(bodyBytes, &amp;dt); err != nil </span><span class="cov0" title="0">{
+                return "", 0, err
         }</span>
 
-        <span class="cov3" title="2">err = i.outputPort.GetUser(ctx, &amp;dto.GetUserOutputDto{
-                User: u,
-        })
-
-        return</span>
-}
-func (i *UserInteractor) CreateUser(ctx *entity.Context, in *dto.CreateUserInputDto) (err error) <span class="cov5" title="4">{
-        log.Println("Interactor CreateUser")
-        defer i.postProcessRepository.PostProcess(ctx, &amp;err)
-        uId, err := i.userRepository.CreateUser(ctx, in.User.FirstName, in.User.LastName, in.User.Email, in.User.Age)
-        if err != nil </span><span class="cov1" title="1">{
-                return
-        }</span>
-
-        <span class="cov4" title="3">u, err := i.userRepository.GetUser(ctx, uId)
-        if err != nil </span><span class="cov1" title="1">{
-                return
-        }</span>
-
-        <span class="cov3" title="2">err = i.outputPort.CreateUser(ctx, &amp;dto.CreateUserOutputDto{
-                User: u,
-        })
-
-        return</span>
-}
-func (i *UserInteractor) UpdateUser(ctx *entity.Context, in *dto.UpdateUserInputDto) (err error) <span class="cov5" title="4">{
-        defer i.postProcessRepository.PostProcess(ctx, &amp;err)
-
-        err = i.userRepository.UpdateUser(ctx, in.UserId, in.Age)
-        if err != nil </span><span class="cov1" title="1">{
-                return
-        }</span>
-
-        <span class="cov4" title="3">u, err := i.userRepository.GetUser(ctx, in.UserId)
-        if err != nil </span><span class="cov1" title="1">{
-                return
-        }</span>
-
-        <span class="cov3" title="2">err = i.outputPort.UpdateUser(ctx, &amp;dto.UpdateUserOutputDto{
-                User: u,
-        })
-
-        return</span>
-}
-func (i *UserInteractor) DeleteUser(ctx *entity.Context, in *dto.DeleteUserInputDto) (err error) <span class="cov4" title="3">{
-        defer i.postProcessRepository.PostProcess(ctx, &amp;err)
-
-        err = i.userRepository.DeleteUser(ctx, in.UserId)
-        if err != nil </span><span class="cov1" title="1">{
-                return
-        }</span>
-
-        <span class="cov3" title="2">err = i.outputPort.DeleteUser(ctx, &amp;dto.DeleteUserOutputDto{})
-
-        return</span>
+        <span class="cov1" title="1">return dt.Name, dt.Age, nil</span>
 }
 </pre>
 		
