@@ -5,8 +5,7 @@ import (
 	"time"
 )
 
-func GoCyclo() {
-	age := 10
+func GoCyclo(age int) {
 	if age > 1 {
 		fmt.Println("GoCyclo test")
 	}

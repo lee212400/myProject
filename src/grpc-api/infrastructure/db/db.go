@@ -10,14 +10,19 @@ import (
 	"github.com/lee212400/myProject/domain/entity"
 )
 
-func GetDb(ctx *entity.Context, db *sql.DB) (*sql.Tx, error) {
+type MyDb struct {
+	Db *sql.DB
+}
+
+func (i *MyDb) GetDbClient(ctx *entity.Context) (*sql.Tx, error) {
 	if val, ok := ctx.Session["mysql"]; ok {
 		if tx, ok := val.(*sql.Tx); ok {
 			return tx, nil
 		}
 	}
 
-	tx, err := db.Begin()
+	myDb := NewDb()
+	tx, err := myDb.Db.Begin()
 	if err != nil {
 		return nil, err
 	}
@@ -43,11 +48,13 @@ func CloseDb(ctx *entity.Context, sucess bool) {
 	}
 }
 
-func NewDb() *sql.DB {
+func NewDb() *MyDb {
 	dsn := "root:password@tcp(mysql.default.svc.cluster.local:3306)/mydb?parseTime=true"
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
 		panic(fmt.Sprintf("failed to connect to DB: %v", err))
 	}
-	return db
+	return &MyDb{
+		Db: db,
+	}
 }
