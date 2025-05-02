@@ -6,6 +6,8 @@ import (
 	"log"
 	"sync"
 	"time"
+
+	"golang.org/x/sync/errgroup"
 )
 
 func main() {
@@ -15,7 +17,8 @@ func main() {
 	//runGoroutine2()
 	//runGoroutineWaitGroup()
 	//runGoroutineWaitGroup2()
-	runGoroutineSample()
+	//runGoroutineSample()
+	runGoroutineErrorGroup()
 }
 
 func runGoroutine() {
@@ -212,4 +215,33 @@ func handleMessage(msg string) error {
 	time.Sleep(500 * time.Millisecond)
 
 	return nil
+}
+
+func runGoroutineErrorGroup() {
+	var g errgroup.Group
+
+	g.Go(func() error {
+		time.Sleep(2 * time.Second)
+		fmt.Println("goroutine 1 completed")
+		return nil
+	})
+
+	g.Go(func() error {
+		time.Sleep(1 * time.Second)
+		fmt.Println("goroutine 2 completed")
+		return fmt.Errorf("error in goroutine 2")
+	})
+
+	g.Go(func() error {
+		time.Sleep(3 * time.Second)
+		fmt.Println("goroutine 3 completed")
+		return nil
+	})
+
+	if err := g.Wait(); err != nil {
+		log.Printf("error occurred: %v", err)
+	} else {
+		fmt.Println("all goroutines completed successfully")
+	}
+
 }
