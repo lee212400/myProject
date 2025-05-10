@@ -1,0 +1,17 @@
+version: v1
+plugins:
+  #以下のpluginは*.pb.go生成するplugin
+  # protoc-gen-goやprotoc利用する場合不要
+  #- plugin: go
+  #  out: ../rpc
+  #  opt: paths=source_relative
+  #- plugin: go-grpc
+  #  out: ../rpc
+  #  opt: paths=source_relative
+  - plugin: grpc-gateway
+    out: ../rpc
+    opt: paths=source_relative
+  - plugin: openapiv2
+    out: ../grpc
+  - plugin: buf.build/bufbuild/validate-go
+    out: ../rpc
