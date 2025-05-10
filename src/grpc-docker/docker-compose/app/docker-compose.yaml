@@ -1,0 +1,22 @@
+services:
+  app:
+    build:
+      context: ../../
+      dockerfile: docker/app/dockerfile
+    ports:
+      - "50051:50051"
+      - "8080:8080"
+    depends_on:
+      - protoc
+    volumes:
+      - ./rpc:/rpc
+    environment:
+      - DB_DSN=root:password@tcp(mysql:3306)/sampledb
+    working_dir: /work
+    command: ["./app"]
+    networks:
+      - mysql_mysql_default
+
+networks:
+  mysql_mysql_default:
+    external: true
